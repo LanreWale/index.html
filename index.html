@@ -1231,9 +1231,12 @@ function showStatusMonitor(transaction) {
     // Start live updates
     if (monitorInterval) clearInterval(monitorInterval);
     monitorInterval = setInterval(updateMonitor, 30000); // Update every 30 seconds
+    
+    if (window.elapsedTimer) clearInterval(window.elapsedTimer);
+    window.elapsedTimer = setInterval(updateElapsedTime, 60000); 
     updateElapsedTime();
 }
-
+     
 // Update monitor with latest status
 function updateMonitor() {
     if (!state.currentTransaction) return;
@@ -1362,3 +1365,4 @@ window.onload = function() {
 </body>
 
 </html>
+
