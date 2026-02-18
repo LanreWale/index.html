@@ -1270,7 +1270,10 @@ function updateMonitor() {
             }
         }
     })
-    .catch(err => console.log('Monitor update failed:', err));
+    .catch(err => {
+        console.log('Monitor update failed:', err);
+        document.getElementById('monitorLastCheck').innerText = 'Error: ' + new Date().toLocaleTimeString();
+    });
     
     updateElapsedTime();
 }
@@ -1363,4 +1366,5 @@ window.onload = function() {
 </body>
 
 </html>
+
 
