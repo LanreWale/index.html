@@ -1211,6 +1211,141 @@ window.onbeforeunload = function() {
             }
         };
 
+        // ==================== STATUS MONITOR ====================
+let statusHistory = [];
+let monitorInterval = null;
+
+// Show monitor with transaction details
+function showStatusMonitor(transaction) {
+    const monitor = document.getElementById('statusMonitor');
+    if (!monitor) return;
+    
+    monitor.style.display = 'block';
+    
+    // Update details
+    document.getElementById('monitorReference').innerText = transaction.reference;
+    document.getElementById('monitorAmount').innerText = transaction.amountNGN;
+    document.getElementById('monitorStatus').innerText = transaction.status.toUpperCase();
+    document.getElementById('monitorLastCheck').innerText = new Date().toLocaleTimeString();
+    
+    // Start live updates
+    if (monitorInterval) clearInterval(monitorInterval);
+    monitorInterval = setInterval(updateMonitor, 30000); // Update every 30 seconds
+    updateElapsedTime();
+}
+
+// Update monitor with latest status
+function updateMonitor() {
+    if (!state.currentTransaction) return;
+    
+    const reference = state.currentTransaction.reference;
+    document.getElementById('monitorLastCheck').innerText = new Date().toLocaleTimeString();
+    
+    fetch(`${CONFIG.EDGE_URL}/status?reference=${reference}`, {
+        headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status) {
+            const status = data.status.toUpperCase();
+            document.getElementById('monitorStatus').innerText = status;
+            
+            // Update color based on status
+            const statusEl = document.getElementById('monitorStatus');
+            statusEl.style.color = status === 'COMPLETED' ? '#10b981' : 
+                                   status === 'FAILED' ? '#ef4444' : '#f59e0b';
+            
+            // Add to history
+            addToStatusHistory(status);
+            
+            // Update progress bar
+            updateProgressBar(status);
+            
+            // If completed or failed, stop interval
+            if (status === 'COMPLETED' || status === 'FAILED') {
+                if (monitorInterval) clearInterval(monitorInterval);
+                document.getElementById('liveIndicator').style.background = 
+                    status === 'COMPLETED' ? '#10b981' : '#ef4444';
+            }
+        }
+    })
+    .catch(err => console.log('Monitor update failed:', err));
+    
+    updateElapsedTime();
+}
+
+// Update elapsed time
+function updateElapsedTime() {
+    if (!state.currentTransaction?.createdAt) return;
+    
+    const start = new Date(state.currentTransaction.createdAt);
+    const now = new Date();
+    const diffMs = now - start;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const mins = diffMins % 60;
+    
+    let elapsedText = '';
+    if (diffHours > 0) {
+        elapsedText = `${diffHours}h ${mins}m`;
+    } else {
+        elapsedText = `${diffMins}m`;
+    }
+    
+    document.getElementById('monitorElapsed').innerText = elapsedText;
+    
+    // Update progress bar percentage (max 24 hours = 100%)
+    const progressPercent = Math.min(100, (diffMs / (24 * 3600000)) * 100);
+    document.getElementById('progressPercentage').innerText = Math.round(progressPercent) + '%';
+    document.getElementById('statusProgressBar').style.width = progressPercent + '%';
+}
+
+// Add to status history
+function addToStatusHistory(status) {
+    const timestamp = new Date().toLocaleTimeString();
+    statusHistory.unshift(`${timestamp} - ${status}`);
+    
+    if (statusHistory.length > 10) statusHistory.pop();
+    
+    const historyEl = document.getElementById('statusHistory');
+    if (historyEl) {
+        historyEl.innerHTML = statusHistory.map(s => 
+            `<div style="padding: 4px 0; border-bottom: 1px solid #334155;">${s}</div>`
+        ).join('');
+    }
+}
+
+// Manual status check
+window.manualStatusCheck = function() {
+    if (!state.currentTransaction) {
+        alert('No active transaction');
+        return;
+    }
+    
+    document.getElementById('monitorLastCheck').innerText = 'Checking...';
+    updateMonitor();
+};
+
+// Copy reference to clipboard
+window.copyReference = function() {
+    const ref = document.getElementById('monitorReference').innerText;
+    if (ref && ref !== 'None') {
+        navigator.clipboard.writeText(ref);
+        alert('Reference copied to clipboard');
+    }
+};
+
+// ==================== INIT ====================
+window.onload = function() {
+    updateBalanceDisplay();
+    fetchBalance();
+    showStatus('✅ Empire Ready', 'info');
+    
+    document.getElementById('validateBtn').onclick = validateAccount;
+    document.getElementById('requestApprovalBtn').onclick = requestGovernanceApproval;
+    document.getElementById('withdrawBtn').onclick = executeWithdrawal;
+};
+        
         // ==================== INIT ====================
         window.onload = function() {
             updateBalanceDisplay();
@@ -1227,4 +1362,3 @@ window.onbeforeunload = function() {
 </body>
 
 </html>
-
