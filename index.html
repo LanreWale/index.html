@@ -193,7 +193,68 @@
         </div>
 
         <button class="btn-success" id="withdrawBtn" disabled>💰 EXECUTE TRANSFER (Rubies)</button>
-
+        
+    <div id="statusMonitor" style="display: none; margin: 20px 0; background: #1e293b; border-radius: 16px; padding: 20px; border: 1px solid #FFD700;">
+    <h3 style="color: #FFD700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+        <span>🔍 TRANSACTION STATUS MONITOR</span>
+        <span id="liveIndicator" style="background: #10b981; width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span>
+    </h3>
+    
+    <!-- Current Transaction Details -->
+    <div id="currentTxDetails" style="background: #0f172a; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #94a3b8;">Reference:</span>
+            <span style="color: white; font-family: monospace;" id="monitorReference">None</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #94a3b8;">Amount:</span>
+            <span style="color: #FFD700; font-weight: 600;" id="monitorAmount">₦0</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #94a3b8;">Status:</span>
+            <span style="color: #f59e0b; font-weight: 600;" id="monitorStatus">PROCESSING</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #94a3b8;">Last Check:</span>
+            <span style="color: white;" id="monitorLastCheck">Just now</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="color: #94a3b8;">Time Elapsed:</span>
+            <span style="color: white;" id="monitorElapsed">0m</span>
+        </div>
+    </div>
+    
+    <!-- Progress Bar -->
+    <div style="margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+            <span style="color: #94a3b8; font-size: 12px;">Processing</span>
+            <span style="color: #FFD700; font-size: 12px;" id="progressPercentage">0%</span>
+        </div>
+        <div style="height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+            <div id="statusProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f59e0b, #FFD700); transition: width 0.3s ease;"></div>
+        </div>
+    </div>
+    
+    <!-- Manual Check Button -->
+    <div style="display: flex; gap: 10px;">
+        <button onclick="manualStatusCheck()" style="flex: 2; background: #3b82f6; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+            🔄 CHECK STATUS NOW
+        </button>
+        <button onclick="copyReference()" style="flex: 1; background: #334155; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;" title="Copy reference">
+            📋 COPY
+        </button>
+    </div>
+    
+    <!-- Status History -->
+    <div style="margin-top: 15px;">
+        <details>
+            <summary style="color: #94a3b8; cursor: pointer; font-size: 13px;">View Status History</summary>
+            <div id="statusHistory" style="margin-top: 10px; max-height: 150px; overflow-y: auto; font-size: 12px; background: #0f172a; padding: 10px; border-radius: 8px;">
+                No history yet
+            </div>
+        </details>
+    </div>
+</div>
         <div id="statusMessage" class="status"></div>
         <div id="debug"></div>
     </div>
@@ -1166,3 +1227,4 @@ window.onbeforeunload = function() {
 </body>
 
 </html>
+
