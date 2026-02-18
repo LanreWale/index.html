@@ -1178,6 +1178,7 @@ window.onbeforeunload = function() {
 
                 if (res.ok) {
                     showStatus('✅ Transfer initiated!', 'success');
+                    showStatusMonitor(state.currentTransaction);
                     showReceipt(state.currentTransaction);
                     
                     // Reset form
@@ -1362,3 +1363,4 @@ window.onload = function() {
 </body>
 
 </html>
+
