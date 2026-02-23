@@ -1340,33 +1340,94 @@
         // ==================== REAL CRYPTO BROADCAST FUNCTIONS ====================
 
         // Broadcast transaction to blockchain via edge function
-        async function broadcastCryptoTransaction(txHex, chain, fromAddress, toAddress, amount, fee) {
-    try {
-        const response = await fetch(
-            'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/broadcast',
-            {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ txHex, chain, fromAddress, toAddress, amount, fee })
+        async function fetchBTCBalance(address) {
+            try {
+                const response = await fetch(
+                    `https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/balance?chain=BTC&address=${address}`,
+                    { headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY } }
+                );
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('BTC balance fetch error:', error);
+                return { success: false, error: error.message };
             }
-        );
-        
-        const data = await response.json();
-        console.log('📦 Server response:', JSON.stringify(data, null, 2));
-        return data;
-        
-    } catch (error) {
-        console.error('Broadcast error:', error);
-        return { success: false, error: error.message };
-    }
-}
+        }
+
+        // Fetch real Bitcoin fees from mempool.space
+        async function fetchBTCFees() {
+            try {
+                const response = await fetch(
+                    'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/fees?chain=BTC',
+                    { headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY } }
+                );
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('BTC fees fetch error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Fetch real Ethereum balance from Etherscan
+        async function fetchETHBalance(address) {
+            try {
+                const response = await fetch(
+                    `https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/balance?chain=ETH&address=${address}`,
+                    { headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY } }
+                );
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('ETH balance fetch error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Fetch real Ethereum gas fees
+        async function fetchETHFees() {
+            try {
+                const response = await fetch(
+                    'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/fees?chain=ETH',
+                    { headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY } }
+                );
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('ETH fees fetch error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // ==================== REAL CRYPTO BROADCAST FUNCTIONS ====================
+
+        // Broadcast transaction to blockchain via edge function
+        async function broadcastCryptoTransaction(txHex, chain, fromAddress, toAddress, amount, fee) {
+            try {
+                console.log('🚀 Broadcasting to:', 'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/broadcast');
+                
+                const response = await fetch(
+                    `https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/broadcast`,
+                    {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: {
+                            'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            txHex: txHex,
+                            chain: chain,
+                            fromAddress: fromAddress,
+                            toAddress: toAddress,
+                            amount: amount,
+                            fee: fee
+                        })
+                    }
+                );
                 
                 console.log('📥 Response status:', response.status);
                 
-                // Check if response is OK
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('❌ Error response:', errorText);
@@ -1376,38 +1437,22 @@
                     };
                 }
                 
-                // Try to parse JSON response
                 const data = await response.json();
                 console.log('✅ Broadcast success:', data);
                 return data;
                 
             } catch (error) {
                 console.error('❌ Broadcast error:', error);
-                
-                // Handle specific error types
-                if (error.message.includes('Failed to fetch')) {
-                    return { 
-                        success: false, 
-                        error: 'Network error: Cannot reach broadcast service. Check your internet connection.' 
-                    };
-                } else if (error.name === 'TypeError') {
-                    return { 
-                        success: false, 
-                        error: 'Network error: ' + error.message 
-                    };
-                }
-                
-                return { success: false, error: error.message };
+                return { 
+                    success: false, 
+                    error: error.message 
+                };
             }
         }
 
         // Create and sign Bitcoin transaction (simplified for demo)
         async function createBitcoinTransaction(fromAddress, toAddress, amountBTC, feeRate) {
             showStatus('🔄 Creating Bitcoin transaction...', 'info');
-            
-            // In production, this would use a library like bitcoinjs-lib
-            // For demo purposes, we'll simulate a transaction hex
-            // The actual signing would require private keys (handled securely on backend)
             
             // Get UTXOs for the from address
             const utxos = await getBitcoinUTXOs(fromAddress);
@@ -1425,9 +1470,6 @@
         // Create and sign Ethereum transaction (simplified for demo)
         async function createEthereumTransaction(fromAddress, toAddress, amountETH, gasPrice) {
             showStatus('🔄 Creating Ethereum transaction...', 'info');
-            
-            // In production, this would use ethers.js or web3.js
-            // For demo purposes, we'll simulate a transaction hex
             
             const mockTxHex = '0xf86c' + 
                 Math.random().toString(16).substring(2, 10) +
@@ -1459,7 +1501,6 @@
                 const result = await fetchETHBalance(fromAddress);
                 balance = result.success ? result.balance : 0;
             }
-            
             return balance >= requiredAmount;
         }
 
@@ -1469,14 +1510,12 @@
             const crypto = state.selectedCrypto;
             const rate = CONFIG.CRYPTO_RATES[crypto];
             
-            // Fetch real fees if available
             let networkFee = CONFIG.CRYPTO_FEES[crypto];
             let feeDisplay = CONFIG.CRYPTO_FEES[crypto] + ' ' + crypto;
             
             if (crypto === 'BTC') {
                 const fees = await fetchBTCFees();
                 if (fees.success) {
-                    // Convert sat/vB to BTC fee estimate (rough estimate for typical tx size)
                     networkFee = (fees.fastest * 0.00000001) * 250;
                     feeDisplay = fees.fastest + ' sat/vB';
                 }
@@ -1489,7 +1528,7 @@
             }
             
             let cryptoAmount = usdAmount / rate;
-            let platformFee = cryptoAmount * 0.001; // 0.1% platform fee
+            let platformFee = cryptoAmount * 0.001;
             let totalFee = platformFee + networkFee;
             let netAmount = cryptoAmount - totalFee;
             
@@ -1497,7 +1536,6 @@
             document.getElementById('cryptoFee').innerText = feeDisplay + ' + 0.1%';
             document.getElementById('cryptoReceive').innerText = Math.max(0, netAmount).toFixed(8) + ' ' + crypto;
             
-            // Store fee for later use
             state.currentNetworkFee = networkFee;
             state.currentPlatformFee = platformFee;
         };
@@ -1512,14 +1550,12 @@
                 return;
             }
             
-            // Format validation based on crypto type
             let isValid = false;
             if (crypto === 'BTC') {
                 isValid = /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$|^(bc1)[a-zA-HJ-NP-Z0-9]{39,59}$/.test(address);
             } else if (crypto === 'ETH') {
                 isValid = /^0x[a-fA-F0-9]{40}$/.test(address);
             } else if (crypto === 'USDT') {
-                // USDT can be on multiple chains
                 const network = document.getElementById('cryptoNetwork').value;
                 if (network === 'TRC20') {
                     isValid = /^T[a-zA-HJ-NP-Z0-9]{33}$/.test(address);
@@ -1567,7 +1603,6 @@
             
             if (result.success) {
                 showStatus(`${crypto} Balance: ${result.balance} ${crypto}`, 'success');
-                // Update the display with real balance
                 if (crypto === 'BTC') {
                     document.getElementById('btcOptionBalance').innerText = result.balance.toFixed(4) + ' BTC';
                     state.cryptoBalances.BTC = result.balance;
@@ -1616,7 +1651,6 @@
                 return;
             }
             
-            // Check if source address has sufficient balance
             const cryptoAmountValue = parseFloat(cryptoAmount.split(' ')[0]);
             const hasBalance = await checkSufficientBalance(fromAddress, crypto, cryptoAmountValue);
             
@@ -1654,53 +1688,140 @@
         };
 
         // Execute real crypto withdrawal with blockchain broadcast
-        // Execute real crypto withdrawal with blockchain broadcast
-window.executeCryptoWithdrawal = async function() {
-    const userCode = document.getElementById('cryptoApprovalCode').value.trim();
-    
-    if (userCode !== state.approvalCode) {
-        showStatus('❌ Invalid approval code', 'error');
-        return;
-    }
+        window.executeCryptoWithdrawal = async function() {
+            const userCode = document.getElementById('cryptoApprovalCode').value.trim();
+            
+            if (userCode !== state.approvalCode) {
+                showStatus('❌ Invalid approval code', 'error');
+                return;
+            }
 
-    const amountUSD = parseFloat(document.getElementById('cryptoUsdAmount').value);
-    const crypto = state.selectedCrypto;
-    const cryptoAmountStr = document.getElementById('cryptoReceive').innerText;
-    const cryptoAmount = parseFloat(cryptoAmountStr.split(' ')[0]);
-    const toAddress = document.getElementById('cryptoAddress').value.trim();
-    const fromAddress = state.cryptoFromAddress;
-    const network = document.getElementById('cryptoNetwork').value;
-    const reference = 'CRYPTO-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+            const amountUSD = parseFloat(document.getElementById('cryptoUsdAmount').value);
+            const crypto = state.selectedCrypto;
+            const cryptoAmountStr = document.getElementById('cryptoReceive').innerText;
+            const cryptoAmount = parseFloat(cryptoAmountStr.split(' ')[0]);
+            const toAddress = document.getElementById('cryptoAddress').value.trim();
+            const fromAddress = state.cryptoFromAddress;
+            const network = document.getElementById('cryptoNetwork').value;
+            const reference = 'CRYPTO-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
 
-    showStatus('⏳ Preparing transaction...', 'pending');
-    document.getElementById('cryptoWithdrawBtn').disabled = true;
+            showStatus('⏳ Preparing transaction...', 'pending');
+            document.getElementById('cryptoWithdrawBtn').disabled = true;
 
-    try {
-        // Get current fee rates
-        let networkFee = state.currentNetworkFee || 0;
-        let txHex = '';
-        
-        // Create transaction based on crypto type
-        if (crypto === 'BTC') {
-            txHex = await createBitcoinTransaction(
-                fromAddress, 
-                toAddress, 
-                cryptoAmount,
-                networkFee
-            );
-        } else if (crypto === 'ETH') {
-            txHex = await createEthereumTransaction(
-                fromAddress,
-                toAddress,
-                cryptoAmount,
-                networkFee
-            );
-        } else {
-            showStatus(`Broadcast not yet implemented for ${crypto}`, 'error');
-            document.getElementById('cryptoWithdrawBtn').disabled = false;
-            return;
+            try {
+                let networkFee = state.currentNetworkFee || 0;
+                let txHex = '';
+                
+                if (crypto === 'BTC') {
+                    txHex = await createBitcoinTransaction(
+                        fromAddress, 
+                        toAddress, 
+                        cryptoAmount,
+                        networkFee
+                    );
+                } else if (crypto === 'ETH') {
+                    txHex = await createEthereumTransaction(
+                        fromAddress,
+                        toAddress,
+                        cryptoAmount,
+                        networkFee
+                    );
+                } else {
+                    showStatus(`Broadcast not yet implemented for ${crypto}`, 'error');
+                    document.getElementById('cryptoWithdrawBtn').disabled = false;
+                    return;
+                }
+
+                showStatus('📤 Broadcasting to blockchain...', 'pending');
+                
+                const result = await broadcastCryptoTransaction(
+                    txHex, 
+                    crypto, 
+                    fromAddress, 
+                    toAddress, 
+                    cryptoAmount,
+                    networkFee
+                );
+                
+                // Safe debug logging
+                console.log('🔍 Broadcast result:', result);
+                
+                const isSuccess = result && (
+                    result.success === true ||
+                    result.success === 'true' ||
+                    result.status === 'success' ||
+                    result.status === 'completed' ||
+                    result.status === 'broadcasted' ||
+                    result.txHash ||
+                    result.transactionHash
+                );
+
+                if (isSuccess) {
+                    const txHash = result.txHash || result.transactionHash || 'pending';
+                    
+                    state.currentTransaction = {
+                        type: 'CRYPTO',
+                        amount: '$' + amountUSD.toFixed(2),
+                        cryptoAmount: cryptoAmount.toFixed(8) + ' ' + crypto,
+                        crypto: crypto,
+                        network: network,
+                        address: toAddress,
+                        fromAddress: fromAddress,
+                        reference: reference,
+                        txHash: txHash,
+                        status: 'broadcasted',
+                        fee: document.getElementById('cryptoFee').innerText,
+                        explorerUrl: result.explorer || (txHash !== 'pending' ? getExplorerUrl(txHash, crypto) : '#')
+                    };
+
+                    showStatus('✅ Transaction broadcasted to blockchain!', 'success');
+                    showStatusMonitor(state.currentTransaction);
+                    showReceipt(state.currentTransaction);
+                    
+                    if (crypto === 'BTC') {
+                        state.cryptoBalances.BTC = (state.cryptoBalances.BTC || 0) - cryptoAmount;
+                    } else if (crypto === 'ETH') {
+                        state.cryptoBalances.ETH = (state.cryptoBalances.ETH || 0) - cryptoAmount;
+                    }
+                    updateCryptoDisplay();
+
+                    setTimeout(() => {
+                        document.getElementById('cryptoApprovalSection').style.display = 'none';
+                        document.getElementById('cryptoAddress').value = '';
+                        if (document.getElementById('cryptoFromAddress')) {
+                            document.getElementById('cryptoFromAddress').value = '';
+                        }
+                        document.getElementById('cryptoValidationInfo').style.display = 'none';
+                        document.getElementById('requestCryptoApprovalBtn').disabled = true;
+                        document.getElementById('cryptoWithdrawBtn').disabled = true;
+                        document.getElementById('cryptoApprovalCode').value = '';
+                        state.approvalCode = null;
+                        state.cryptoFromAddress = null;
+                    }, 5000);
+
+                } else {
+                    const errorMsg = result?.error || 'Broadcast failed';
+                    showStatus('❌ ' + errorMsg, 'error');
+                    document.getElementById('cryptoWithdrawBtn').disabled = false;
+                }
+
+            } catch (error) {
+                console.error('Withdrawal error:', error);
+                showStatus('❌ Error: ' + error.message, 'error');
+                document.getElementById('cryptoWithdrawBtn').disabled = false;
+            }
+        };
+
+        // Helper to get block explorer URL
+        function getExplorerUrl(txHash, crypto) {
+            const explorers = {
+                BTC: `https://www.blockchain.com/btc/tx/${txHash}`,
+                ETH: `https://etherscan.io/tx/${txHash}`,
+                BSC: `https://bscscan.com/tx/${txHash}`,
+                TRX: `https://tronscan.org/#/transaction/${txHash}`
+            };
+            return explorers[crypto] || '#';
         }
-
         showStatus('📤 Broadcasting to blockchain...', 'pending');
         
         // Broadcast to the blockchain via edge function
@@ -2197,6 +2318,7 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
 
 
