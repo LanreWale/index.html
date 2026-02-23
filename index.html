@@ -1723,10 +1723,71 @@
                         state.cryptoFromAddress = null;
                     }, 5000);
 
-                } else {
-                    throw new Error(result.error || 'Broadcast failed');
-                }
+                // Check for success in multiple formats
+const isSuccess = result && (
+    result.success === true || 
+    result.success === 'true' || 
+    result.status === 'success' || 
+    result.status === 'completed' || 
+    result.broadcasted === true ||
+    result.txHash || 
+    result.transactionHash ||
+    result.hash
+);
 
+if (isSuccess) {
+    // Get the transaction hash from wherever it exists
+    const txHash = result.txHash || result.transactionHash || result.hash || 'pending';
+    
+    state.currentTransaction = {
+        type: 'CRYPTO',
+        amount: '$' + amountUSD.toFixed(2),
+        cryptoAmount: cryptoAmount.toFixed(8) + ' ' + crypto,
+        crypto: crypto,
+        network: network,
+        address: toAddress,
+        fromAddress: fromAddress,
+        reference: reference,
+        txHash: txHash,
+        status: 'broadcasted',
+        fee: document.getElementById('cryptoFee').innerText,
+        explorerUrl: result.explorer || (txHash !== 'pending' ? getExplorerUrl(txHash, crypto) : '#')
+    };
+
+    showStatus('✅ Transaction broadcasted to blockchain!', 'success');
+    showStatusMonitor(state.currentTransaction);
+    showReceipt(state.currentTransaction);
+    
+    // Update local balance
+    if (crypto === 'BTC') {
+        state.cryptoBalances.BTC = (state.cryptoBalances.BTC || 0) - cryptoAmount;
+    } else if (crypto === 'ETH') {
+        state.cryptoBalances.ETH = (state.cryptoBalances.ETH || 0) - cryptoAmount;
+    }
+    updateCryptoDisplay();
+
+    // Reset form
+    setTimeout(() => {
+        document.getElementById('cryptoApprovalSection').style.display = 'none';
+        document.getElementById('cryptoAddress').value = '';
+        if (document.getElementById('cryptoFromAddress')) {
+            document.getElementById('cryptoFromAddress').value = '';
+        }
+        document.getElementById('cryptoValidationInfo').style.display = 'none';
+        document.getElementById('requestCryptoApprovalBtn').disabled = true;
+        document.getElementById('cryptoWithdrawBtn').disabled = true;
+        document.getElementById('cryptoApprovalCode').value = '';
+        state.approvalCode = null;
+        state.cryptoFromAddress = null;
+    }, 5000);
+
+} else {
+    // Failure path with detailed error
+    const errorMsg = result?.error || result?.message || 'Broadcast failed';
+    console.error('❌ Broadcast failed - full response:', result);
+    showStatus('❌ Broadcast failed: ' + errorMsg, 'error');
+    document.getElementById('cryptoWithdrawBtn').disabled = false;
+}
             } catch (error) {
                 showStatus('❌ Broadcast failed: ' + error.message, 'error');
                 document.getElementById('cryptoWithdrawBtn').disabled = false;
@@ -2143,4 +2204,5 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
