@@ -1717,7 +1717,7 @@ window.executeCryptoWithdrawal = async function() {
         );
         
         // Check if result exists and has success property
-        if (result && result.success === true) {
+        if (result && (result.success === true || result.success === 'true' || result.success === 1 || result.success === '1')) {
             // Success path
             state.currentTransaction = {
                 type: 'CRYPTO',
@@ -2175,6 +2175,7 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
 
 
