@@ -1656,10 +1656,13 @@ async function broadcastCryptoTransaction(txHex, chain, fromAddress, toAddress, 
 window.executeCryptoWithdrawal = async function() {
     const userCode = document.getElementById('cryptoApprovalCode').value.trim();
     
-    if (userCode !== state.approvalCode) {
-        showStatus('❌ Invalid approval code', 'error');
-        return;
-    }
+    if (result && result.success === true) {
+    // success code - keep your existing success code here
+} else {
+    const errorMsg = result?.error || 'Broadcast failed';
+    showStatus('❌ ' + errorMsg, 'error');
+    document.getElementById('cryptoWithdrawBtn').disabled = false;
+}
 
     const amountUSD = parseFloat(document.getElementById('cryptoUsdAmount').value);
     const crypto = state.selectedCrypto;
@@ -2271,6 +2274,7 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
 
 
