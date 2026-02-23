@@ -881,6 +881,7 @@
         ];
 
         // ==================== GLOBAL CONFIG ====================
+               // ==================== GLOBAL CONFIG ====================
         const CONFIG = {
             PAYSTACK_KEY: 'sk_live_4b951926b192f505be7b9eac54b039a7642458d5',
             TELEGRAM_TOKEN: '7868469400:AAHpNI1wbKjMBdS6DKYFxcpPsoa_nNkSF34',
@@ -888,7 +889,7 @@
             USD_TO_NGN: 1430.80,
             EDGE_URL: 'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/empire-wallet-transfer',
             SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1amx5cm1hdHV2bHBvZWhlcWdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwOTE5NDUsImV4cCI6MjA2NzY2Nzk0NX0.PgIRCU_-r6o-u6AIhj52FE1iezdwt3wpi-a9zQvAdsc',
-        
+            
             CRYPTO_RATES: {
                 BTC: 43521.50,
                 ETH: 2280.15,
@@ -921,92 +922,58 @@
             }
         };
 
-        // ==================== EMERGENCY TEST ====================
-console.log('✅ Script started');
-alert('JavaScript is running! If you see this, script is loading.');
+        // ==================== SIMPLE TEST ====================
+        console.log('✅ CONFIG loaded');
+        alert('CONFIG loaded successfully!');
         
         // ==================== GLOBAL STATE ====================
         let state = {
-            // Bank transfer state
             balance: 184362.87,
             matches: [],
             selectedMatch: null,
             approvalCode: null,
             currentTransaction: null,
-            
-            // Crypto state
-            cryptoBalances: {
-                BTC: 2.5432,
-                ETH: 15.789,
-                USDT: 50000,
-                BNB: 125.5
-            },
+            cryptoBalances: { BTC: 2.5432, ETH: 15.789, USDT: 50000, BNB: 125.5 },
             selectedCrypto: 'BTC',
             selectedNetwork: 'Bitcoin',
             validatedCryptoAddress: null,
-            
-            // International state
             selectedCurrency: 'EUR',
-            
-            // Internal state
             internalUser: null
         };
 
-        let statusCheckInterval = null;
-        let elapsedTimer = null;
-        let statusHistory = [];
-        let monitorInterval = null;
+        alert('STATE loaded');
 
-        // ==================== UI HELPERS ====================
+        // ==================== SIMPLE UI HELPERS ====================
         function showStatus(message, type) {
+            console.log('STATUS:', type, message);
             const el = document.getElementById('statusMessage');
-            el.className = `status ${type}`;
-            el.innerHTML = message;
+            if (el) {
+                el.className = `status ${type}`;
+                el.innerHTML = message;
+            }
         }
 
-        function debug(message) {
-            console.log(message);
-            document.getElementById('debug').innerHTML = String(message);
-        }
+        alert('UI HELPERS loaded');
 
-        function updateBalanceDisplay() {
-            document.getElementById('balanceDisplay').innerText = '$' + state.balance.toFixed(2);
-            document.getElementById('internationalBalanceDisplay').innerText = '$' + state.balance.toFixed(2);
-            document.getElementById('internalBalanceDisplay').innerText = '$' + state.balance.toFixed(2);
-        }
-
-        function updateCryptoDisplay() {
-            document.getElementById('btcBalance').innerText = state.cryptoBalances.BTC.toFixed(4);
-            document.getElementById('ethBalance').innerText = state.cryptoBalances.ETH.toFixed(3);
-            document.getElementById('usdtBalance').innerText = state.cryptoBalances.USDT.toLocaleString();
-            document.getElementById('bnbBalance').innerText = state.cryptoBalances.BNB.toFixed(1);
-            
-            document.getElementById('btcOptionBalance').innerText = state.cryptoBalances.BTC.toFixed(4) + ' BTC';
-            document.getElementById('ethOptionBalance').innerText = state.cryptoBalances.ETH.toFixed(3) + ' ETH';
-            document.getElementById('usdtOptionBalance').innerText = state.cryptoBalances.USDT.toLocaleString() + ' USDT';
-            document.getElementById('bnbOptionBalance').innerText = state.cryptoBalances.BNB.toFixed(1) + ' BNB';
-            
-            // Calculate total USD value
-            const totalUSD = 
-                (state.cryptoBalances.BTC * CONFIG.CRYPTO_RATES.BTC) +
-                (state.cryptoBalances.ETH * CONFIG.CRYPTO_RATES.ETH) +
-                (state.cryptoBalances.USDT * CONFIG.CRYPTO_RATES.USDT) +
-                (state.cryptoBalances.BNB * CONFIG.CRYPTO_RATES.BNB);
-            
-            document.getElementById('cryptoTotalDisplay').innerText = '$' + totalUSD.toLocaleString(undefined, {maximumFractionDigits: 2});
-        }
-
-        // ==================== PLATFORM SWITCHING ====================
+        // ==================== SIMPLE PLATFORM SWITCHING ====================
         window.switchPlatform = function(platform) {
+            console.log('Switching to:', platform);
             document.querySelectorAll('.platform-tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.platform-content').forEach(content => content.classList.remove('active'));
             
-            document.querySelector(`[onclick="switchPlatform('${platform}')"]`).classList.add('active');
-            document.getElementById(`platform-${platform}`).classList.add('active');
+            const tab = document.querySelector(`[onclick="switchPlatform('${platform}')"]`);
+            if (tab) tab.classList.add('active');
+            
+            const content = document.getElementById(`platform-${platform}`);
+            if (content) content.classList.add('active');
             
             showStatus(`Switched to ${platform} platform`, 'info');
         };
 
+        alert('PLATFORM SWITCHING loaded - CLICK A TAB NOW!');
+
+        // ==================== REST OF YOUR CODE HERE ====================
+        // ... (paste the rest of your functions after this line)
         // ==================== RUBIES CODE MAPPING ====================
         function getRubiesCode(paystackCode, bankName) {
             const manualMap = {
@@ -2306,6 +2273,7 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
 
 
