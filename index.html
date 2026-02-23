@@ -1704,29 +1704,31 @@ window.executeCryptoWithdrawal = async function() {
         showStatus('📤 Broadcasting to blockchain...', 'pending');
         
         // Broadcast to the blockchain via edge function
-        const result = await broadcastCryptoTransaction(
-            txHex, 
-            crypto, 
-            fromAddress, 
-            toAddress, 
-            cryptoAmount,
-            networkFee
-        );
+        showStatus('📤 Broadcasting to blockchain...', 'pending');
 
-        console.log('🔍 RAW RESULT:', result);
-        console.log('🔍 RESULT TYPE:', typeof result);
-        console.log('🔍 RESULT KEYS:', Object.keys(result || {}));
-        console.log('🔍 RESULT.success:', result?.success);
-        console.log('🔍 RESULT.status:', result?.status);
-        console.log('🔍 RESULT.txHash:', result?.txHash);
-        console.log('🔍 RESULT.error:', result?.error);
-        
-        // Check if result indicates success in any common format
+// Broadcast to the blockchain via edge function
+const result = await broadcastCryptoTransaction(
+    txHex,
+    crypto,
+    fromAddress,
+    toAddress,
+    cryptoAmount,
+    networkFee
+);
+
+console.log('🔍 RAW RESULT:', JSON.stringify(result, null, 2));
+console.log('🔍 RESULT TYPE:', typeof result);
+console.log('🔍 RESULT KEYS:', Object.keys(result || {}));
+console.log('🔍 RESULT.success:', result?.success);
+console.log('🔍 RESULT.status:', result?.status);
+console.log('🔍 RESULT.txHash:', result?.txHash);
+console.log('🔍 RESULT.error:', result?.error);
+
+// Check if result indicates success in any common format
 const isSuccess = result && (
-    // Check for various success indicators
-    result.success === true || 
-    result.success === 'true' || 
-    result.success === 1 || 
+    result.success === true ||
+    result.success === 'true' ||
+    result.success === 1 ||
     result.success === '1' ||
     result.status === 'success' ||
     result.status === 'completed' ||
@@ -1734,11 +1736,13 @@ const isSuccess = result && (
     result.status === true ||
     result.status === 'true' ||
     result.broadcasted === true ||
-    result.txHash ||  // If it has a txHash, it's likely success
+    result.txHash || // Capital H, not lowercase
     result.transactionHash ||
     result.hash ||
     result.txid
 );
+
+console.log('🔍 isSuccess evaluation:', isSuccess);
 
 if (isSuccess) {
     // Success path - use whatever hash is available
@@ -2193,6 +2197,7 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
 
 
