@@ -1654,129 +1654,125 @@
         };
 
         // Execute real crypto withdrawal with blockchain broadcast
-        window.executeCryptoWithdrawal = async function() {
-            const userCode = document.getElementById('cryptoApprovalCode').value.trim();
-            
-            if (userCode !== state.approvalCode) {
-                showStatus('❌ Invalid approval code', 'error');
-                return;
-            }
+        // Execute real crypto withdrawal with blockchain broadcast
+window.executeCryptoWithdrawal = async function() {
+    const userCode = document.getElementById('cryptoApprovalCode').value.trim();
+    
+    if (userCode !== state.approvalCode) {
+        showStatus('❌ Invalid approval code', 'error');
+        return;
+    }
 
-            const amountUSD = parseFloat(document.getElementById('cryptoUsdAmount').value);
-            const crypto = state.selectedCrypto;
-            const cryptoAmountStr = document.getElementById('cryptoReceive').innerText;
-            const cryptoAmount = parseFloat(cryptoAmountStr.split(' ')[0]);
-            const toAddress = document.getElementById('cryptoAddress').value.trim();
-            const fromAddress = state.cryptoFromAddress;
-            const network = document.getElementById('cryptoNetwork').value;
-            const reference = 'CRYPTO-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+    const amountUSD = parseFloat(document.getElementById('cryptoUsdAmount').value);
+    const crypto = state.selectedCrypto;
+    const cryptoAmountStr = document.getElementById('cryptoReceive').innerText;
+    const cryptoAmount = parseFloat(cryptoAmountStr.split(' ')[0]);
+    const toAddress = document.getElementById('cryptoAddress').value.trim();
+    const fromAddress = state.cryptoFromAddress;
+    const network = document.getElementById('cryptoNetwork').value;
+    const reference = 'CRYPTO-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
 
-            showStatus('⏳ Preparing transaction...', 'pending');
-            document.getElementById('cryptoWithdrawBtn').disabled = true;
+    showStatus('⏳ Preparing transaction...', 'pending');
+    document.getElementById('cryptoWithdrawBtn').disabled = true;
 
-            try {
-                // Get current fee rates
-                let networkFee = state.currentNetworkFee || 0;
-                let txHex = '';
-                
-                // Create transaction based on crypto type
-                if (crypto === 'BTC') {
-                    txHex = await createBitcoinTransaction(
-                        fromAddress, 
-                        toAddress, 
-                        cryptoAmount,
-                        networkFee
-                    );
-                } else if (crypto === 'ETH') {
-                    txHex = await createEthereumTransaction(
-                        fromAddress,
-                        toAddress,
-                        cryptoAmount,
-                        networkFee
-                    );
-                } else {
-                    // For USDT, BNB, etc. - would need specific handling
-                    showStatus(`Broadcast not yet implemented for ${crypto}`, 'error');
-                    document.getElementById('cryptoWithdrawBtn').disabled = false;
-                    return;
-                }
-
-                showStatus('📤 Broadcasting to blockchain...', 'pending');
-                
-                // Broadcast to the blockchain via edge function
-                const result = await broadcastCryptoTransaction(
-                    txHex, 
-                    crypto, 
-                    fromAddress, 
-                    toAddress, 
-                    cryptoAmount,
-                    networkFee
-                );
-                
-                if (result && result.success) {
-                    state.currentTransaction = {
-                        type: 'CRYPTO',
-                        amount: '$' + amountUSD.toFixed(2),
-                        cryptoAmount: cryptoAmount.toFixed(8) + ' ' + crypto,
-                        crypto: crypto,
-                        network: network,
-                        address: toAddress,
-                        fromAddress: fromAddress,
-                        reference: reference,
-                        txHash: result.txHash,
-                        status: 'broadcasted',
-                        fee: document.getElementById('cryptoFee').innerText,
-                        explorerUrl: result.explorer || getExplorerUrl(result.txHash, crypto)
-                    };
-
-                    showStatus('✅ Transaction broadcasted to blockchain!', 'success');
-                    showStatusMonitor(state.currentTransaction);
-                    showReceipt(state.currentTransaction);
-                    
-                    // Update local balance (optimistic)
-                    if (crypto === 'BTC') {
-                        state.cryptoBalances.BTC = (state.cryptoBalances.BTC || 0) - cryptoAmount;
-                    } else if (crypto === 'ETH') {
-                        state.cryptoBalances.ETH = (state.cryptoBalances.ETH || 0) - cryptoAmount;
-                    }
-                    updateCryptoDisplay();
-
-                    // Reset form after success
-                    setTimeout(() => {
-                        document.getElementById('cryptoApprovalSection').style.display = 'none';
-                        document.getElementById('cryptoAddress').value = '';
-                        if (document.getElementById('cryptoFromAddress')) {
-                            document.getElementById('cryptoFromAddress').value = '';
-                        }
-                        document.getElementById('cryptoValidationInfo').style.display = 'none';
-                        document.getElementById('requestCryptoApprovalBtn').disabled = true;
-                        document.getElementById('cryptoWithdrawBtn').disabled = true;
-                        document.getElementById('cryptoApprovalCode').value = '';
-                        state.approvalCode = null;
-                        state.cryptoFromAddress = null;
-                    }, 5000);
-
-                } else {
-                    throw new Error(result?.error || 'Broadcast failed with no response');
-                }
-
-            } catch (error) {
-                showStatus('❌ Broadcast failed: ' + error.message, 'error');
-                document.getElementById('cryptoWithdrawBtn').disabled = false;
-                console.error('Withdrawal error:', error);
-            }
-        };
-
-        // Helper to get block explorer URL
-        function getExplorerUrl(txHash, crypto) {
-            const explorers = {
-                BTC: `https://www.blockchain.com/btc/tx/${txHash}`,
-                ETH: `https://etherscan.io/tx/${txHash}`,
-                BSC: `https://bscscan.com/tx/${txHash}`,
-                TRX: `https://tronscan.org/#/transaction/${txHash}`
-            };
-            return explorers[crypto] || '#';
+    try {
+        // Get current fee rates
+        let networkFee = state.currentNetworkFee || 0;
+        let txHex = '';
+        
+        // Create transaction based on crypto type
+        if (crypto === 'BTC') {
+            txHex = await createBitcoinTransaction(
+                fromAddress, 
+                toAddress, 
+                cryptoAmount,
+                networkFee
+            );
+        } else if (crypto === 'ETH') {
+            txHex = await createEthereumTransaction(
+                fromAddress,
+                toAddress,
+                cryptoAmount,
+                networkFee
+            );
+        } else {
+            showStatus(`Broadcast not yet implemented for ${crypto}`, 'error');
+            document.getElementById('cryptoWithdrawBtn').disabled = false;
+            return;
         }
+
+        showStatus('📤 Broadcasting to blockchain...', 'pending');
+        
+        // Broadcast to the blockchain via edge function
+        const result = await broadcastCryptoTransaction(
+            txHex, 
+            crypto, 
+            fromAddress, 
+            toAddress, 
+            cryptoAmount,
+            networkFee
+        );
+        
+        // Check if result exists and has success property
+        if (result && result.success === true) {
+            // Success path
+            state.currentTransaction = {
+                type: 'CRYPTO',
+                amount: '$' + amountUSD.toFixed(2),
+                cryptoAmount: cryptoAmount.toFixed(8) + ' ' + crypto,
+                crypto: crypto,
+                network: network,
+                address: toAddress,
+                fromAddress: fromAddress,
+                reference: reference,
+                txHash: result.txHash || 'pending',
+                status: 'broadcasted',
+                fee: document.getElementById('cryptoFee').innerText,
+                explorerUrl: result.explorer || (result.txHash ? getExplorerUrl(result.txHash, crypto) : '#')
+            };
+
+            showStatus('✅ Transaction broadcasted to blockchain!', 'success');
+            showStatusMonitor(state.currentTransaction);
+            showReceipt(state.currentTransaction);
+            
+            // Update local balance (optimistic)
+            if (crypto === 'BTC') {
+                state.cryptoBalances.BTC = (state.cryptoBalances.BTC || 0) - cryptoAmount;
+            } else if (crypto === 'ETH') {
+                state.cryptoBalances.ETH = (state.cryptoBalances.ETH || 0) - cryptoAmount;
+            }
+            updateCryptoDisplay();
+
+            // Reset form after success
+            setTimeout(() => {
+                document.getElementById('cryptoApprovalSection').style.display = 'none';
+                document.getElementById('cryptoAddress').value = '';
+                if (document.getElementById('cryptoFromAddress')) {
+                    document.getElementById('cryptoFromAddress').value = '';
+                }
+                document.getElementById('cryptoValidationInfo').style.display = 'none';
+                document.getElementById('requestCryptoApprovalBtn').disabled = true;
+                document.getElementById('cryptoWithdrawBtn').disabled = true;
+                document.getElementById('cryptoApprovalCode').value = '';
+                state.approvalCode = null;
+                state.cryptoFromAddress = null;
+            }, 5000);
+
+        } else {
+            // Failure path with detailed error
+            const errorMsg = result?.error || 'Unknown error';
+            const errorDetails = result?.details ? ` (${result.details})` : '';
+            console.error('❌ Broadcast failed:', result);
+            showStatus(`❌ Broadcast failed: ${errorMsg}${errorDetails}`, 'error');
+            document.getElementById('cryptoWithdrawBtn').disabled = false;
+        }
+
+    } catch (error) {
+        console.error('❌ Withdrawal error:', error);
+        showStatus('❌ Error: ' + error.message, 'error');
+        document.getElementById('cryptoWithdrawBtn').disabled = false;
+    }
+};
         // ==================== INTERNATIONAL FUNCTIONS ====================
         window.updateInternationalConversion = function() {
             const usdAmount = parseFloat(document.getElementById('internationalAmount').value) || 0;
@@ -2176,6 +2172,7 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
 
 
