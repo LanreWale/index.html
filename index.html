@@ -1341,28 +1341,31 @@
 
         // Broadcast transaction to blockchain via edge function
         async function broadcastCryptoTransaction(txHex, chain, fromAddress, toAddress, amount, fee) {
-            try {
-                console.log('🚀 Broadcasting to:', 'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/broadcast');
-                
-                const response = await fetch(
-                    `https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/broadcast`,
-                    {
-                        method: 'POST',
-                        mode: 'cors',
-                        headers: {
-                            'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ 
-                            txHex: txHex,
-                            chain: chain,
-                            fromAddress: fromAddress,
-                            toAddress: toAddress,
-                            amount: amount,
-                            fee: fee
-                        })
-                    }
-                );
+    try {
+        const response = await fetch(
+            'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/broadcast',
+            {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ txHex, chain, fromAddress, toAddress, amount, fee })
+            }
+        );
+        
+        const data = await response.json();
+        return data;
+        
+    } catch (error) {
+        console.error('Broadcast error:', error);
+        return { 
+            success: false, 
+            error: error.message,
+            details: 'Network error - check your connection'
+        };
+    }
+}
                 
                 console.log('📥 Response status:', response.status);
                 
@@ -2172,6 +2175,7 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
 
 
