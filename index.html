@@ -364,29 +364,36 @@
             </div>
 
             <div class="input-group">
-                <label>Destination Wallet Address</label>
-                <input type="text" id="cryptoAddress" placeholder="Enter crypto wallet address">
-            </div>
+    <label>Destination Wallet Address</label>
+    <input type="text" id="cryptoAddress" placeholder="Enter crypto wallet address">
+</div>
 
-            <button class="btn-primary" id="validateCryptoBtn" onclick="validateCryptoAddress()">🔍 VALIDATE ADDRESS</button>
-            
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button class="btn-info" onclick="checkCryptoBalance()" style="flex: 1;">💰 CHECK BALANCE</button>
-                <button class="btn-secondary" onclick="updateCryptoConversion()" style="flex: 1;">🔄 REFRESH RATES</button>
-            </div>
+<!-- 👇 ADD THIS NEW SECTION RIGHT HERE 👇 -->
+<div class="input-group">
+    <label>Your Source Wallet Address</label>
+    <input type="text" id="cryptoFromAddress" placeholder="Enter your wallet address to send FROM" value="bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq">
+    <small style="color: #94a3b8; font-size: 12px;">This is where the crypto will be sent FROM</small>
+</div>
 
-            <div class="info-box" id="cryptoValidationInfo" style="display: none;">
-                <strong>✅ Address Validated:</strong> <span id="validatedCryptoAddress"></span>
-            </div>
+<button class="btn-primary" id="validateCryptoBtn" onclick="validateCryptoAddress()">🔍 VALIDATE ADDRESS</button>
 
-            <button class="btn-secondary" id="requestCryptoApprovalBtn" disabled onclick="requestCryptoApproval()">🔐 REQUEST CRYPTO APPROVAL</button>
+<div style="display: flex; gap: 10px; margin-top: 10px;">
+    <button class="btn-info" onclick="checkCryptoBalance()" style="flex: 1;">💰 CHECK BALANCE</button>
+    <button class="btn-secondary" onclick="updateCryptoConversion()" style="flex: 1;">🔄 REFRESH RATES</button>
+</div>
 
-            <div class="approval-section" id="cryptoApprovalSection" style="display: none;">
-                <label>Enter Approval Code</label>
-                <input type="text" id="cryptoApprovalCode" placeholder="6-digit code from Telegram" maxlength="6">
-            </div>
+<div class="info-box" id="cryptoValidationInfo" style="display: none;">
+    <strong>✅ Address Validated:</strong> <span id="validatedCryptoAddress"></span>
+</div>
 
-            <button class="btn-success" id="cryptoWithdrawBtn" disabled onclick="executeCryptoWithdrawal()">₿ SEND CRYPTO</button>
+<button class="btn-secondary" id="requestCryptoApprovalBtn" disabled onclick="requestCryptoApproval()">🔐 REQUEST CRYPTO APPROVAL</button>
+
+<div class="approval-section" id="cryptoApprovalSection" style="display: none;">
+    <label>Enter Approval Code</label>
+    <input type="text" id="cryptoApprovalCode" placeholder="6-digit code from Telegram" maxlength="6">
+</div>
+
+<button class="btn-success" id="cryptoWithdrawBtn" disabled onclick="executeCryptoWithdrawal()">₿ SEND CRYPTO</button>
         </div>
 
         <!-- INTERNATIONAL PLATFORM -->
@@ -2136,4 +2143,5 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
