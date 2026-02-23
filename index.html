@@ -1712,6 +1712,14 @@ window.executeCryptoWithdrawal = async function() {
             cryptoAmount,
             networkFee
         );
+
+        console.log('🔍 RAW RESULT:', result);
+        console.log('🔍 RESULT TYPE:', typeof result);
+        console.log('🔍 RESULT KEYS:', Object.keys(result || {}));
+        console.log('🔍 RESULT.success:', result?.success);
+        console.log('🔍 RESULT.status:', result?.status);
+        console.log('🔍 RESULT.txHash:', result?.txHash);
+        console.log('🔍 RESULT.error:', result?.error);
         
         // Check if result indicates success in any common format
 const isSuccess = result && (
@@ -2185,6 +2193,7 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
 
 
