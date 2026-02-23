@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMPIRE v2.1 - Wallet Transfer</title>
+    <title>EMPIRE v2.1 - Global Payments Hub</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
         body { background: linear-gradient(135deg, #0a0f1e 0%, #1a1f2e 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
@@ -39,13 +39,63 @@
         .empire-tagline { font-size: 11px; color: #FFD700; margin-top: 8px; letter-spacing: 2px; opacity: 0.8; position: relative; }
         .crown-icon { font-size: 32px; filter: drop-shadow(0 0 10px #FFD700); margin-bottom: 5px; }
         
+        /* Platform Tabs */
+        .platform-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .platform-tab {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 8px;
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .platform-tab.active {
+            background: #FFD700;
+            color: #0a0f1e;
+            border-color: #FFD700;
+        }
+        .platform-tab:hover {
+            border-color: #FFD700;
+        }
+        
+        .platform-content {
+            display: none;
+        }
+        .platform-content.active {
+            display: block;
+        }
+        
         .balance-card { background: linear-gradient(145deg, #1e293b, #0f172a); border-radius: 24px; padding: 24px; margin-bottom: 32px; border: 1px solid #FFD700; text-align: center; }
         .balance-label { color: #FFD700; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
         .balance-amount { color: white; font-size: 48px; font-weight: 800; }
+        
+        .multi-balance {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+        
         .input-group { margin-bottom: 20px; }
         label { color: #cbd5e1; font-size: 14px; font-weight: 500; display: block; margin-bottom: 8px; }
-        input, select { width: 100%; padding: 16px; background: #1e293b; border: 2px solid #334155; border-radius: 16px; color: white; font-size: 16px; transition: all 0.3s; }
-        input:focus, select:focus { outline: none; border-color: #FFD700; background: #2d3a4f; }
+        input, select, textarea { width: 100%; padding: 16px; background: #1e293b; border: 2px solid #334155; border-radius: 16px; color: white; font-size: 16px; transition: all 0.3s; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #FFD700; background: #2d3a4f; }
+        textarea { min-height: 80px; resize: vertical; }
+        
         button { width: 100%; padding: 16px; border: none; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.3s; margin-bottom: 12px; }
         .btn-primary { background: #FFD700; color: #0a0f1e; }
         .btn-primary:hover:not(:disabled) { background: #e6c200; transform: translateY(-2px); box-shadow: 0 10px 25px -5px #FFD700; }
@@ -54,6 +104,8 @@
         .btn-secondary:hover:not(:disabled) { background: #475569; }
         .btn-success { background: #10b981; color: white; }
         .btn-success:hover:not(:disabled) { background: #059669; }
+        .btn-info { background: #3b82f6; color: white; }
+        .btn-info:hover:not(:disabled) { background: #2563eb; }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .matches-container { background: #1e293b; border-radius: 16px; padding: 16px; margin: 20px 0; border: 1px solid #334155; max-height: 300px; overflow-y: auto; }
@@ -64,6 +116,44 @@
         .match-details { display: flex; justify-content: space-between; color: #94a3b8; font-size: 13px; margin-top: 4px; }
         .match-bank { color: #cbd5e1; font-weight: 500; }
         .match-badge { background: #10b98120; color: #10b981; padding: 2px 8px; border-radius: 12px; font-size: 11px; border: 1px solid #10b981; margin-left: 8px; }
+        
+        .crypto-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .crypto-option {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .crypto-option.selected {
+            border-color: #FFD700;
+            background: #2d3a4f;
+        }
+        .crypto-option .symbol { font-size: 24px; margin-bottom: 5px; }
+        .crypto-option .name { color: white; font-weight: 600; }
+        .crypto-option .balance { color: #94a3b8; font-size: 12px; margin-top: 5px; }
+        
+        .rate-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid #FFD700;
+        }
+        .rate-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .rate-label { color: #94a3b8; }
+        .rate-value { color: #FFD700; font-weight: 600; }
         
         .status { padding: 16px; border-radius: 16px; margin: 20px 0; text-align: center; font-weight: 500; display: none; }
         .status.success { background: #10b98120; border: 1px solid #10b981; color: #10b981; display: block; }
@@ -82,7 +172,7 @@
         .warning { color: #FFD700; font-size: 12px; margin-top: 5px; }
         .info-box { background: #2d3a4f; border-radius: 12px; padding: 15px; margin: 10px 0; font-size: 14px; color: #cbd5e1; }
         
-        /* Receipt Modal - NO BALANCE */
+        /* Modal Styles */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -95,6 +185,9 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
         }
         .modal-content {
             background: linear-gradient(145deg, #1e293b, #0f172a);
@@ -123,16 +216,19 @@
         .btn-close { background: #FFD700; color: #0a0f1e; padding: 12px 24px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; width: auto; display: inline-block; }
         .btn-close:hover { background: #e6c200; }
         .receipt-icon { font-size: 48px; margin-bottom: 16px; }
+        
         .txn-status-badge {
             display: inline-block;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 700;
-            margin-left: 8px;
         }
         .status-badge-success { background: #10b98120; color: #10b981; border: 1px solid #10b981; }
         .status-badge-pending { background: #f59e0b20; color: #f59e0b; border: 1px solid #f59e0b; }
+        .status-badge-failed { background: #ef444420; color: #ef4444; border: 1px solid #ef4444; }
+        .status-badge-processing { background: #3b82f620; color: #3b82f6; border: 1px solid #3b82f6; }
+        
         #debug { color: #94a3b8; font-size: 12px; margin-top: 20px; border-top: 1px solid #334155; padding-top: 10px; }
     </style>
 </head>
@@ -146,264 +242,416 @@
             <div class="empire-tagline">OF AFFILIATE MARKETING</div>
         </div>
 
-        <div class="balance-card">
-            <div class="balance-label">AVAILABLE BALANCE</div>
-            <div class="balance-amount" id="balanceDisplay">$184,326.87</div>
+        <!-- Platform Tabs -->
+        <div class="platform-tabs">
+            <button class="platform-tab active" onclick="switchPlatform('bank')">🏦 Bank Transfer</button>
+            <button class="platform-tab" onclick="switchPlatform('crypto')">₿ Crypto</button>
+            <button class="platform-tab" onclick="switchPlatform('international')">🌍 International</button>
+            <button class="platform-tab" onclick="switchPlatform('internal')">👛 Internal</button>
         </div>
 
-        <div class="input-group">
-            <label>Amount (USD) *minimum $1</label>
-            <input type="number" id="amount" placeholder="Enter amount in USD" min="1" step="0.01" value="">
-        </div>
-
-        <div class="input-group">
-            <label>Account Number</label>
-            <input type="text" id="accountInput" placeholder="10-digit Nigerian account number" maxlength="10">
-        </div>
-
-        <!-- Progress Indicator -->
-        <div class="progress-container" id="progressContainer">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
+        <!-- BANK TRANSFER PLATFORM -->
+        <div id="platform-bank" class="platform-content active">
+            <div class="balance-card">
+                <div class="balance-label">AVAILABLE BALANCE</div>
+                <div class="balance-amount" id="balanceDisplay">$184,326.87</div>
             </div>
-            <div class="bank-attempt" id="currentBankAttempt">Initializing...</div>
+
+            <div class="input-group">
+                <label>Amount (USD) *minimum $1</label>
+                <input type="number" id="amount" placeholder="Enter amount in USD" min="1" step="0.01" value="100">
+            </div>
+
+            <div class="input-group">
+                <label>Account Number</label>
+                <input type="text" id="accountInput" placeholder="10-digit Nigerian account number" maxlength="10">
+            </div>
+
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="bank-attempt" id="currentBankAttempt">Initializing...</div>
+            </div>
+
+            <button class="btn-primary" id="validateBtn">🔍 VALIDATE ACCOUNT (Paystack)</button>
+
+            <div id="matchesSection" class="matches-container" style="display: none;">
+                <h3 style="color: #FFD700; margin-bottom: 15px; display: flex; justify-content: space-between;">
+                    <span>Select Destination Bank:</span>
+                    <span style="background: #10b98120; color: #10b981; padding: 4px 12px; border-radius: 20px;" id="matchCount">0 matches</span>
+                </h3>
+                <div id="matchesList"></div>
+            </div>
+
+            <div class="info-box" id="validationInfo" style="display: none;">
+                <strong>✅ Account Validated:</strong> <span id="validatedName"></span>
+            </div>
+
+            <button class="btn-secondary" id="requestApprovalBtn" disabled>🔐 REQUEST GOVERNANCE APPROVAL</button>
+
+            <div class="approval-section" id="approvalSection">
+                <label>Enter Approval Code</label>
+                <input type="text" id="approvalCode" placeholder="6-digit code from Telegram" maxlength="6">
+                <div class="warning">Check Empire Telegram channel for your approval code</div>
+            </div>
+
+            <button class="btn-success" id="withdrawBtn" disabled>💰 EXECUTE TRANSFER (Rubies)</button>
         </div>
 
-        <button class="btn-primary" id="validateBtn">🔍 VALIDATE ACCOUNT (Paystack)</button>
+        <!-- CRYPTO PLATFORM -->
+        <div id="platform-crypto" class="platform-content">
+            <div class="balance-card">
+                <div class="balance-label">CRYPTO PORTFOLIO</div>
+                <div class="balance-amount" id="cryptoTotalDisplay">$152,847.32</div>
+                <div class="multi-balance">
+                    <span>₿ <span id="btcBalance">2.5432</span></span>
+                    <span>💎 <span id="ethBalance">15.789</span></span>
+                    <span>💵 <span id="usdtBalance">50,000</span></span>
+                    <span>🔶 <span id="bnbBalance">125.5</span></span>
+                </div>
+            </div>
 
-        <!-- Matches Section -->
-        <div id="matchesSection" class="matches-container" style="display: none;">
-            <h3 style="color: #FFD700; margin-bottom: 15px; display: flex; justify-content: space-between;">
-                <span>Select Destination Bank:</span>
-                <span style="background: #10b98120; color: #10b981; padding: 4px 12px; border-radius: 20px;" id="matchCount">0 matches</span>
+            <div class="crypto-selector" id="cryptoSelector">
+                <div class="crypto-option selected" onclick="selectCrypto('BTC')">
+                    <div class="symbol">₿</div>
+                    <div class="name">Bitcoin</div>
+                    <div class="balance" id="btcOptionBalance">2.5432 BTC</div>
+                </div>
+                <div class="crypto-option" onclick="selectCrypto('ETH')">
+                    <div class="symbol">💎</div>
+                    <div class="name">Ethereum</div>
+                    <div class="balance" id="ethOptionBalance">15.789 ETH</div>
+                </div>
+                <div class="crypto-option" onclick="selectCrypto('USDT')">
+                    <div class="symbol">💵</div>
+                    <div class="name">USDT</div>
+                    <div class="balance" id="usdtOptionBalance">50,000 USDT</div>
+                </div>
+                <div class="crypto-option" onclick="selectCrypto('BNB')">
+                    <div class="symbol">🔶</div>
+                    <div class="name">BNB</div>
+                    <div class="balance" id="bnbOptionBalance">125.5 BNB</div>
+                </div>
+            </div>
+
+            <div class="rate-card" id="cryptoRateCard">
+                <div class="rate-row">
+                    <span class="rate-label">Live Rate:</span>
+                    <span class="rate-value" id="cryptoRate">$43,521.50/BTC</span>
+                </div>
+                <div class="rate-row">
+                    <span class="rate-label">Network Fee:</span>
+                    <span class="rate-value" id="cryptoFee">0.0005 BTC</span>
+                </div>
+                <div class="rate-row">
+                    <span class="rate-label">You'll Receive:</span>
+                    <span class="rate-value" id="cryptoReceive">0.0000 BTC</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Amount (USD)</label>
+                <input type="number" id="cryptoUsdAmount" placeholder="Enter USD amount" value="1000" oninput="updateCryptoConversion()">
+            </div>
+
+            <div class="input-group">
+                <label>Network</label>
+                <select id="cryptoNetwork" onchange="updateCryptoConversion()">
+                    <option value="Bitcoin">Bitcoin Network</option>
+                    <option value="Lightning">Lightning Network</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Destination Wallet Address</label>
+                <input type="text" id="cryptoAddress" placeholder="Enter crypto wallet address">
+            </div>
+
+            <button class="btn-primary" id="validateCryptoBtn" onclick="validateCryptoAddress()">🔍 VALIDATE ADDRESS</button>
+            
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn-info" onclick="checkCryptoBalance()" style="flex: 1;">💰 CHECK BALANCE</button>
+                <button class="btn-secondary" onclick="updateCryptoConversion()" style="flex: 1;">🔄 REFRESH RATES</button>
+            </div>
+
+            <div class="info-box" id="cryptoValidationInfo" style="display: none;">
+                <strong>✅ Address Validated:</strong> <span id="validatedCryptoAddress"></span>
+            </div>
+
+            <button class="btn-secondary" id="requestCryptoApprovalBtn" disabled onclick="requestCryptoApproval()">🔐 REQUEST CRYPTO APPROVAL</button>
+
+            <div class="approval-section" id="cryptoApprovalSection" style="display: none;">
+                <label>Enter Approval Code</label>
+                <input type="text" id="cryptoApprovalCode" placeholder="6-digit code from Telegram" maxlength="6">
+            </div>
+
+            <button class="btn-success" id="cryptoWithdrawBtn" disabled onclick="executeCryptoWithdrawal()">₿ SEND CRYPTO</button>
+        </div>
+
+        <!-- INTERNATIONAL PLATFORM -->
+        <div id="platform-international" class="platform-content">
+            <div class="balance-card">
+                <div class="balance-label">USD BALANCE</div>
+                <div class="balance-amount" id="internationalBalanceDisplay">$184,326.87</div>
+            </div>
+
+            <div class="input-group">
+                <label>Target Currency</label>
+                <select id="targetCurrency" onchange="updateInternationalConversion()">
+                    <option value="EUR">Euro (EUR)</option>
+                    <option value="GBP">British Pound (GBP)</option>
+                    <option value="CAD">Canadian Dollar (CAD)</option>
+                    <option value="AUD">Australian Dollar (AUD)</option>
+                    <option value="JPY">Japanese Yen (JPY)</option>
+                    <option value="CHF">Swiss Franc (CHF)</option>
+                </select>
+            </div>
+
+            <div class="rate-card">
+                <div class="rate-row">
+                    <span class="rate-label">Exchange Rate:</span>
+                    <span class="rate-value" id="exchangeRate">1 USD = 0.92 EUR</span>
+                </div>
+                <div class="rate-row">
+                    <span class="rate-label">Transfer Fee:</span>
+                    <span class="rate-value" id="internationalFee">$15.00</span>
+                </div>
+                <div class="rate-row">
+                    <span class="rate-label">Recipient Receives:</span>
+                    <span class="rate-value" id="recipientReceives">0.00 EUR</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Amount (USD)</label>
+                <input type="number" id="internationalAmount" placeholder="Enter USD amount" value="1000" oninput="updateInternationalConversion()">
+            </div>
+
+            <div class="input-group">
+                <label>Transfer Method</label>
+                <select id="transferMethod">
+                    <option value="SWIFT">SWIFT (1-3 days)</option>
+                    <option value="SEPA">SEPA (1-2 days)</option>
+                    <option value="WIRE">Wire Transfer (2-5 days)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Recipient Full Name</label>
+                <input type="text" id="recipientFullName" placeholder="John Doe">
+            </div>
+
+            <div class="input-group">
+                <label>SWIFT/BIC Code</label>
+                <input type="text" id="swiftCode" placeholder="e.g., BOFAUS3N">
+            </div>
+
+            <div class="input-group">
+                <label>IBAN/Account Number</label>
+                <input type="text" id="internationalAccount" placeholder="International account number">
+            </div>
+
+            <div class="input-group">
+                <label>Bank Name</label>
+                <input type="text" id="internationalBankName" placeholder="Bank of America">
+            </div>
+
+            <button class="btn-primary" id="validateInternationalBtn" onclick="validateInternationalAccount()">🔍 VALIDATE ACCOUNT</button>
+
+            <div class="info-box" id="internationalValidationInfo" style="display: none;">
+                <strong>✅ Account Validated</strong>
+            </div>
+
+            <button class="btn-secondary" id="requestInternationalApprovalBtn" disabled onclick="requestInternationalApproval()">🔐 REQUEST INTERNATIONAL APPROVAL</button>
+
+            <div class="approval-section" id="internationalApprovalSection" style="display: none;">
+                <label>Enter Approval Code</label>
+                <input type="text" id="internationalApprovalCode" placeholder="6-digit code from Telegram" maxlength="6">
+            </div>
+
+            <button class="btn-success" id="internationalWithdrawBtn" disabled onclick="executeInternationalTransfer()">🌍 SEND INTERNATIONAL</button>
+        </div>
+
+        <!-- INTERNAL WALLET PLATFORM -->
+        <div id="platform-internal" class="platform-content">
+            <div class="balance-card">
+                <div class="balance-label">INTERNAL WALLET</div>
+                <div class="balance-amount" id="internalBalanceDisplay">$184,326.87</div>
+            </div>
+
+            <div class="input-group">
+                <label>Recipient Email/Username</label>
+                <input type="text" id="recipientUsername" placeholder="Enter Empire username or email">
+            </div>
+
+            <div class="input-group">
+                <label>Amount (USD)</label>
+                <input type="number" id="internalAmount" placeholder="Enter amount" value="100">
+            </div>
+
+            <div class="input-group">
+                <label>Description (Optional)</label>
+                <input type="text" id="internalDescription" placeholder="What's this for?">
+            </div>
+
+            <button class="btn-primary" id="validateInternalBtn" onclick="validateInternalUser()">🔍 VERIFY USER</button>
+
+            <div class="info-box" id="internalValidationInfo" style="display: none;">
+                <strong>✅ User Verified:</strong> <span id="verifiedUser"></span>
+            </div>
+
+            <button class="btn-secondary" id="requestInternalApprovalBtn" disabled onclick="requestInternalApproval()">🔐 REQUEST INTERNAL APPROVAL</button>
+
+            <div class="approval-section" id="internalApprovalSection" style="display: none;">
+                <label>Enter Approval Code</label>
+                <input type="text" id="internalApprovalCode" placeholder="6-digit code from Telegram" maxlength="6">
+            </div>
+
+            <button class="btn-success" id="internalWithdrawBtn" disabled onclick="executeInternalTransfer()">👛 SEND INTERNAL</button>
+        </div>
+
+        <!-- Status Monitor (Shared) -->
+        <div id="statusMonitor" style="display: none; margin: 20px 0; background: #1e293b; border-radius: 16px; padding: 20px; border: 1px solid #FFD700;">
+            <h3 style="color: #FFD700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                <span>🔍 TRANSACTION STATUS MONITOR</span>
+                <span id="liveIndicator" style="background: #10b981; width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span>
             </h3>
-            <div id="matchesList"></div>
-        </div>
-
-        <div class="info-box" id="validationInfo" style="display: none;">
-            <strong>✅ Account Validated:</strong> <span id="validatedName"></span>
-        </div>
-
-        <button class="btn-secondary" id="requestApprovalBtn" disabled>🔐 REQUEST GOVERNANCE APPROVAL</button>
-
-        <div class="approval-section" id="approvalSection">
-            <label>Enter Approval Code</label>
-            <input type="text" id="approvalCode" placeholder="6-digit code from Telegram" maxlength="6">
-            <div class="warning">Check Empire Telegram channel for your approval code</div>
-        </div>
-
-        <button class="btn-success" id="withdrawBtn" disabled>💰 EXECUTE TRANSFER (Rubies)</button>
-        
-    <div id="statusMonitor" style="display: none; margin: 20px 0; background: #1e293b; border-radius: 16px; padding: 20px; border: 1px solid #FFD700;">
-    <h3 style="color: #FFD700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-        <span>🔍 TRANSACTION STATUS MONITOR</span>
-        <span id="liveIndicator" style="background: #10b981; width: 10px; height: 10px; border-radius: 50%; display: inline-block;"></span>
-    </h3>
-    
-    <!-- Current Transaction Details -->
-    <div id="currentTxDetails" style="background: #0f172a; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span style="color: #94a3b8;">Reference:</span>
-            <span style="color: white; font-family: monospace;" id="monitorReference">None</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span style="color: #94a3b8;">Amount:</span>
-            <span style="color: #FFD700; font-weight: 600;" id="monitorAmount">₦0</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span style="color: #94a3b8;">Status:</span>
-            <span style="color: #f59e0b; font-weight: 600;" id="monitorStatus">PROCESSING</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span style="color: #94a3b8;">Last Check:</span>
-            <span style="color: white;" id="monitorLastCheck">Just now</span>
-        </div>
-        <div style="display: flex; justify-content: space-between;">
-            <span style="color: #94a3b8;">Time Elapsed:</span>
-            <span style="color: white;" id="monitorElapsed">0m</span>
-        </div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div style="margin-bottom: 15px;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-            <span style="color: #94a3b8; font-size: 12px;">Processing</span>
-            <span style="color: #FFD700; font-size: 12px;" id="progressPercentage">0%</span>
-        </div>
-        <div style="height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
-            <div id="statusProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f59e0b, #FFD700); transition: width 0.3s ease;"></div>
-        </div>
-    </div>
-    
-    <!-- Manual Check Button -->
-    <div style="display: flex; gap: 10px;">
-        <button onclick="manualStatusCheck()" style="flex: 2; background: #3b82f6; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
-            🔄 CHECK STATUS NOW
-        </button>
-        <button onclick="copyReference()" style="flex: 1; background: #334155; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;" title="Copy reference">
-            📋 COPY
-        </button>
-    </div>
-    
-    <!-- Status History -->
-    <div style="margin-top: 15px;">
-        <details>
-            <summary style="color: #94a3b8; cursor: pointer; font-size: 13px;">View Status History</summary>
-            <div id="statusHistory" style="margin-top: 10px; max-height: 150px; overflow-y: auto; font-size: 12px; background: #0f172a; padding: 10px; border-radius: 8px;">
-                No history yet
+            
+            <div id="currentTxDetails" style="background: #0f172a; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #94a3b8;">Reference:</span>
+                    <span style="color: white; font-family: monospace;" id="monitorReference">None</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #94a3b8;">Type:</span>
+                    <span style="color: #FFD700; font-weight: 600;" id="monitorType">-</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #94a3b8;">Amount:</span>
+                    <span style="color: #FFD700; font-weight: 600;" id="monitorAmount">$0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #94a3b8;">Status:</span>
+                    <span style="color: #f59e0b; font-weight: 600;" id="monitorStatus">PROCESSING</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: #94a3b8;">Last Check:</span>
+                    <span style="color: white;" id="monitorLastCheck">Just now</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8;">Time Elapsed:</span>
+                    <span style="color: white;" id="monitorElapsed">0m</span>
+                </div>
             </div>
-        </details>
-    </div>
-</div>
+            
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="color: #94a3b8; font-size: 12px;">Processing</span>
+                    <span style="color: #FFD700; font-size: 12px;" id="progressPercentage">0%</span>
+                </div>
+                <div style="height: 6px; background: #334155; border-radius: 3px; overflow: hidden;">
+                    <div id="statusProgressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #f59e0b, #FFD700); transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="manualStatusCheck()" style="flex: 2; background: #3b82f6; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    🔄 CHECK STATUS NOW
+                </button>
+                <button onclick="copyReference()" style="flex: 1; background: #334155; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;" title="Copy reference">
+                    📋 COPY
+                </button>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <details>
+                    <summary style="color: #94a3b8; cursor: pointer; font-size: 13px;">View Status History</summary>
+                    <div id="statusHistory" style="margin-top: 10px; max-height: 150px; overflow-y: auto; font-size: 12px; background: #0f172a; padding: 10px; border-radius: 8px;">
+                        No history yet
+                    </div>
+                </details>
+            </div>
+        </div>
+
         <div id="statusMessage" class="status"></div>
         <div id="debug"></div>
     </div>
 
-    <!-- Receipt Modal - NO BALANCE -->
-<!-- Receipt Modal -->
-<div class="modal-overlay" id="receiptModal">
-    <div class="modal-content">
-        <div class="receipt-header">
-            <div class="receipt-icon">🏰</div>
-            <div class="receipt-title">EMPIRE AFFILIATE MARKETING HUB</div>
-            <div class="receipt-subtitle">Official Payment Receipt</div>
-            <div class="receipt-subtitle" id="receiptTimestamp"></div>
-        </div>
-        
-        <div class="receipt-details">
-            <!-- Receipt ID -->
-            <div class="receipt-row">
-                <span class="receipt-label">Receipt ID:</span>
-                <span class="receipt-value" id="receiptReceiptId"></span>
-            </div>
-            
-            <!-- Transaction ID -->
-            <div class="receipt-row">
-                <span class="receipt-label">Transaction ID:</span>
-                <span class="receipt-value" id="receiptTransactionId"></span>
-            </div>
-            
-            <!-- Date & Time -->
-            <div class="receipt-row">
-                <span class="receipt-label">Date & Time:</span>
-                <span class="receipt-value" id="receiptDateTime"></span>
-            </div>
-            
-            <!-- Status -->
-            <div class="receipt-row">
-                <span class="receipt-label">Status:</span>
-                <span class="receipt-value" id="receiptStatusDisplay"></span>
-            </div>
-            
-            <!-- Amount -->
-            <div class="receipt-row">
-                <span class="receipt-label">Amount:</span>
-                <span class="receipt-value" id="receiptAmount"></span>
-            </div>
-            
-            <!-- Recipient -->
-            <div class="receipt-row">
-                <span class="receipt-label">Recipient:</span>
-                <span class="receipt-value" id="receiptRecipient"></span>
-            </div>
-            
-            <!-- Account -->
-            <div class="receipt-row">
-                <span class="receipt-label">Account:</span>
-                <span class="receipt-value" id="receiptAccount"></span>
-            </div>
-            
-            <!-- Institution -->
-            <div class="receipt-row">
-                <span class="receipt-label">Institution:</span>
-                <span class="receipt-value" id="receiptBank"></span>
-            </div>
-            
-            <!-- Payment Method -->
-            <div class="receipt-row">
-                <span class="receipt-label">Payment Method:</span>
-                <span class="receipt-value">Bank Transfer</span>
-            </div>
-            
-            <!-- Purpose (Editable) -->
-            <div class="receipt-row">
-                <span class="receipt-label">Purpose:</span>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <input type="text" id="receiptPurpose" value="Affiliate payout" 
-                           style="background: #2d3a4f; border: 1px solid #FFD700; border-radius: 4px; 
-                                  padding: 4px 8px; color: white; width: 160px;">
-                    <button onclick="savePurpose()" style="background: #10b981; border: none; 
-                            border-radius: 4px; padding: 4px 12px; color: white; cursor: pointer; 
-                            font-size: 12px; font-weight: 600;">SAVE</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Official Note -->
-        <div style="text-align: center; margin: 20px 0; font-style: italic; color: #94a3b8; font-size: 12px;">
-            This is an official receipt from The Empire Payments System
-        </div>
-        
-        <!-- Buttons -->
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button onclick="downloadReceipt()" 
-                    style="background: #3b82f6; color: white; padding: 10px 20px; border: none; 
-                           border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;
-                           transition: all 0.3s;">
-                📥 DOWNLOAD RECEIPT
-            </button>
-            <button onclick="closeReceipt()" 
-                    style="background: #FFD700; color: black; padding: 10px 20px; border: none; 
-                           border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;
-                           transition: all 0.3s;">
-                CLOSE
-            </button>
-        </div>
-    </div>
-</div>
-    
-    <div class="modal-overlay" id="statusModal">
+    <!-- Receipt Modal -->
+    <div class="modal-overlay" id="receiptModal">
         <div class="modal-content">
             <div class="receipt-header">
-                <div class="receipt-icon">⏳</div>
-                <div class="receipt-title">TRANSACTION STATUS</div>
+                <div class="receipt-icon">🏰</div>
+                <div class="receipt-title">EMPIRE AFFILIATE MARKETING HUB</div>
+                <div class="receipt-subtitle">Official Payment Receipt</div>
+                <div class="receipt-subtitle" id="receiptTimestamp"></div>
             </div>
             
             <div class="receipt-details">
                 <div class="receipt-row">
-                    <span class="receipt-label">Reference</span>
-                    <span class="receipt-value" id="statusReference"></span>
+                    <span class="receipt-label">Receipt ID:</span>
+                    <span class="receipt-value" id="receiptReceiptId"></span>
                 </div>
                 <div class="receipt-row">
-                    <span class="receipt-label">Current Status</span>
-                    <span class="receipt-value" id="statusBadge">
-                        <span class="txn-status-badge status-badge-pending">PENDING</span>
-                    </span>
+                    <span class="receipt-label">Transaction ID:</span>
+                    <span class="receipt-value" id="receiptTransactionId"></span>
                 </div>
                 <div class="receipt-row">
-                    <span class="receipt-label">Last Check</span>
-                    <span class="receipt-value" id="lastCheck"></span>
+                    <span class="receipt-label">Type:</span>
+                    <span class="receipt-value" id="receiptType"></span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Date & Time:</span>
+                    <span class="receipt-value" id="receiptDateTime"></span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Status:</span>
+                    <span class="receipt-value" id="receiptStatusDisplay"></span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Amount:</span>
+                    <span class="receipt-value" id="receiptAmount"></span>
+                </div>
+                <div class="receipt-row" id="receiptRecipientRow">
+                    <span class="receipt-label">Recipient:</span>
+                    <span class="receipt-value" id="receiptRecipient"></span>
+                </div>
+                <div class="receipt-row" id="receiptAccountRow">
+                    <span class="receipt-label">Account/Address:</span>
+                    <span class="receipt-value" id="receiptAccount"></span>
+                </div>
+                <div class="receipt-row" id="receiptBankRow">
+                    <span class="receipt-label">Institution/Network:</span>
+                    <span class="receipt-value" id="receiptBank"></span>
+                </div>
+                <div class="receipt-row" id="receiptFeeRow">
+                    <span class="receipt-label">Fee:</span>
+                    <span class="receipt-value" id="receiptFee">$0.00</span>
                 </div>
             </div>
             
-            <div class="progress-bar" style="margin: 20px 0; height: 8px; background: #334155; border-radius: 4px; overflow: hidden;">
-                <div class="progress-fill" id="statusProgress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #FFD700, #e6c200); transition: width 0.3s ease;"></div>
+            <div style="text-align: center; margin: 20px 0; font-style: italic; color: #94a3b8; font-size: 12px;">
+                This is an official receipt from The Empire Payments System
             </div>
             
-            <div id="statusMessage" style="text-align: center; margin: 10px 0; color: #94a3b8;">
-                Most transfers complete within 2-3 hours
-            </div>
-            
-            <div class="receipt-footer" style="display: flex; gap: 10px;">
-                <button class="btn-close" onclick="checkStatus()" style="flex: 1; background: #3b82f6;">CHECK AGAIN</button>
-                <button class="btn-close" onclick="closeStatusModal()" style="flex: 1; background: #334155;">CLOSE</button>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="downloadReceipt()" 
+                        style="background: #3b82f6; color: white; padding: 10px 20px; border: none; 
+                               border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">
+                    📥 DOWNLOAD RECEIPT
+                </button>
+                <button onclick="closeReceipt()" 
+                        style="background: #FFD700; color: black; padding: 10px 20px; border: none; 
+                               border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1;">
+                    CLOSE
+                </button>
             </div>
         </div>
     </div>
+
     <script>
         // ==================== COMPLETE BANK LISTS ====================
-        
-        // Paystack Bank List (205+ banks from your file)
         const PAYSTACK_BANKS = [
             { code: '120001', name: '9mobile 9Payment Service Bank' },
             { code: '404', name: 'Abbey Mortgage Bank' },
@@ -611,7 +859,7 @@
             { code: '057', name: 'Zenith Bank' }
         ];
 
-        // Rubies Bank List (800+ banks from your file - partial shown, full list in actual implementation)
+        // Rubies Bank List
         const RUBIES_BANKS = [
             { code: '110005', name: '3LINE CARD MANAGEMENT' },
             { code: '110072', name: '78 FINANCE COMPANY' },
@@ -622,128 +870,81 @@
             { code: '070010', name: 'ABBEY MORTGAGE BANK' },
             { code: '090260', name: 'ABOVE ONLY MFB' },
             { code: '090640', name: 'ABSU MFB' },
-            { code: '090197', name: 'ABU MFB' },
-            { code: '090424', name: 'ABUCOOP  MFB' },
-            { code: '090545', name: 'ABULESORO MFB' },
-            { code: '090202', name: 'ACCELEREX NETWORK' },
-            { code: '000014', name: 'ACCESS BANK' },
-            { code: '000005', name: 'ACCESS BANK' },
-            { code: '100013', name: 'ACCESSMONEY' },
-            { code: '090134', name: 'ACCION MFB' },
-            { code: '090483', name: 'ADA MFB' },
-            { code: '090160', name: 'ADDOSSER MFB' },
-            { code: '090268', name: 'ADEYEMI COLLEGE STAFF MFB' },
-            { code: '090759', name: 'ADVANCLY MFB' },
-            { code: '090155', name: 'ADVANS LA FAYETTE MFB' },
-            { code: '090614', name: 'AELLA MFB' },
-            { code: '090292', name: 'AFEKHAFE MFB' },
-            { code: '090518', name: 'AFEMAI MFB' },
-            { code: '100028', name: 'AG MORTGAGE BANK' },
-            { code: '090371', name: 'AGOSASA MFB' },
-            { code: '090698', name: 'AKALABO MFB' },
-            { code: '090608', name: 'AKPO MFB' },
-            { code: '090531', name: 'AKU MFB' },
-            { code: '090561', name: 'AKUCHUKWU MFB' },
-            { code: '070025', name: 'AKWA SAVINGS  & LOANS' },
-            { code: '090133', name: 'AL-BARAKAH MFB' },
-            { code: '090259', name: 'ALEKUN MFB' },
-            { code: '090297', name: 'ALERT MFB' },
-            { code: '090277', name: 'ALHAYAT MFB' },
-            { code: '090131', name: 'ALLWORKERS MFB' },
-            { code: '090548', name: 'ALLY MFB' },
-            { code: '090169', name: 'ALPHA KAPITAL MFB' },
-            { code: '000037', name: 'ALTERNATIVE BANK' },
-            { code: '090489', name: 'ALVANA MFB' },
-            { code: '090394', name: 'AMAC MFB' },
-            { code: '090180', name: 'AMJU MFB' },
-            { code: '090116', name: 'AMML MFB' },
-            { code: '090610', name: 'AMOYE MFB' },
-            { code: '090476', name: 'ANCHORAGE MFB' },
-            { code: '090469', name: 'ANIOCHA MFB' },
-            { code: '090143', name: 'APEKS MFB' },
-            { code: '090376', name: 'APPLE  MFB' },
-            { code: '090307', name: 'ARAMOKO MFB' },
-            { code: '110011', name: 'ARCA PAYMENTS' },
-            { code: '090282', name: 'ARISE MFB' },
-            { code: '090816', name: 'ARM MFB' },
-            { code: '090001', name: 'ASO SAVINGS  & LOANS' },
-            { code: '090544', name: 'ASPIRE MFB' },
-            { code: '070033', name: 'ASPIRE MORTGAGE BANK' },
-            { code: '090287', name: 'ASSETS MATRIX MFB' },
-            { code: '090473', name: 'ASSETS MFB' },
-            { code: '090172', name: 'ASTRA POLARIS MFB' },
-            { code: '090451', name: 'ATBU  MFB' },
-            { code: '090264', name: 'AUCHI MFB' },
-            { code: '090600', name: 'AVE MARIA MFB' },
-            { code: '090478', name: 'AVUENEGBE MFB' },
-            { code: '090633', name: 'AWACASH MFB' },
-            { code: '090693', name: 'AWE MFB' },
-            { code: '090662', name: 'AWESOME MFB' },
-            { code: '090540', name: 'AZTEC MFB' }
+            { code: '090197', name: 'ABU MFB' }
         ];
 
-        // Rubies API key mapping (you'll need to complete this based on your Rubies list)
-        function getRubiesCode(paystackCode, bankName) {
-            // Manual mapping for major banks
-            const manualMap = {
-                '044': '000005', // Access Bank
-                '058': '000013', // GTBank
-                '057': '000015', // Zenith
-                '033': '000004', // UBA
-                '011': '000016', // First Bank
-                '070': '000007', // Fidelity
-                '214': '000003', // FCMB
-                '035': '000017', // Wema
-                '032': '000018', // Union Bank
-                '076': '000008', // Polaris
-                '050': '000010', // Ecobank
-                '221': '000012', // Stanbic
-                '068': '000021', // Standard Chartered
-                '082': '000002', // Keystone
-                '301': '000006', // Jaiz
-                '023': '000009', // Citibank
-                '999992': '100004', // OPay
-                '50211': '090267', // Kuda
-                '999991': '100033', // PalmPay
-                '50515': '090405', // Moniepoint
-                '125': '090175', // Rubies
-                '035A': '000017', // ALAT
-                '00103': '000027', // Globus
-                '105': '000031', // PremiumTrust
-                '106': '000034', // Signature
-                '101': '000023', // Providus
-                '100': '000022', // Suntrust
-                '302': '000026', // TAJ Bank
-                '303': '000029', // Lotus Bank
-                '566': '090110', // VFD
-                '565': '100026', // Carbon
-            };
-            
-            return manualMap[paystackCode] || '000001'; // Default to Sterling if not found
-        }
-
-        // ==================== CONFIG ====================
+        // ==================== GLOBAL CONFIG ====================
         const CONFIG = {
             PAYSTACK_KEY: 'sk_live_4b951926b192f505be7b9eac54b039a7642458d5',
             TELEGRAM_TOKEN: '7868469400:AAHpNI1wbKjMBdS6DKYFxcpPsoa_nNkSF34',
             TELEGRAM_CHAT: '-1002604596144',
             USD_TO_NGN: 1430.80,
             EDGE_URL: 'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/empire-wallet-transfer',
-            SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1amx5cm1hdHV2bHBvZWhlcWdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwOTE5NDUsImV4cCI6MjA2NzY2Nzk0NX0.PgIRCU_-r6o-u6AIhj52FE1iezdwt3wpi-a9zQvAdsc'
+            SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1amx5cm1hdHV2bHBvZWhlcWdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwOTE5NDUsImV4cCI6MjA2NzY2Nzk0NX0.PgIRCU_-r6o-u6AIhj52FE1iezdwt3wpi-a9zQvAdsc',
+            
+            CRYPTO_RATES: {
+                BTC: 43521.50,
+                ETH: 2280.15,
+                USDT: 1.00,
+                BNB: 315.75
+            },
+            
+            CRYPTO_FEES: {
+                BTC: 0.0005,
+                ETH: 0.005,
+                USDT: 2.50,
+                BNB: 0.001
+            },
+            
+            FOREX_RATES: {
+                EUR: 0.92,
+                GBP: 0.79,
+                CAD: 1.35,
+                AUD: 1.52,
+                JPY: 150.25,
+                CHF: 0.88
+            },
+            
+            PLATFORM_FEES: {
+                crypto: 0.001,
+                international: 15,
+                internal: 0,
+                minFee: 1,
+                maxFee: 50
+            }
         };
 
-        // ==================== STATE ====================
+        // ==================== GLOBAL STATE ====================
         let state = {
+            // Bank transfer state
             balance: 184362.87,
             matches: [],
             selectedMatch: null,
             approvalCode: null,
-            currentTransaction: null
+            currentTransaction: null,
+            
+            // Crypto state
+            cryptoBalances: {
+                BTC: 2.5432,
+                ETH: 15.789,
+                USDT: 50000,
+                BNB: 125.5
+            },
+            selectedCrypto: 'BTC',
+            selectedNetwork: 'Bitcoin',
+            validatedCryptoAddress: null,
+            
+            // International state
+            selectedCurrency: 'EUR',
+            
+            // Internal state
+            internalUser: null
         };
 
         let statusCheckInterval = null;
-
         let elapsedTimer = null;
+        let statusHistory = [];
+        let monitorInterval = null;
 
         // ==================== UI HELPERS ====================
         function showStatus(message, type) {
@@ -759,193 +960,58 @@
 
         function updateBalanceDisplay() {
             document.getElementById('balanceDisplay').innerText = '$' + state.balance.toFixed(2);
+            document.getElementById('internationalBalanceDisplay').innerText = '$' + state.balance.toFixed(2);
+            document.getElementById('internalBalanceDisplay').innerText = '$' + state.balance.toFixed(2);
         }
 
-        function showProgress(show, bankName) {
-            const container = document.getElementById('progressContainer');
-            if (show) {
-                container.style.display = 'block';
-                if (bankName) {
-                    document.getElementById('currentBankAttempt').innerHTML = 
-                        `<span class="spinner"></span>Checking ${bankName}...`;
-                }
-            } else {
-                container.style.display = 'none';
-            }
-        }
-
-        function updateProgress(percent, bankName) {
-            document.getElementById('progressFill').style.width = percent + '%';
-            if (bankName) {
-                document.getElementById('currentBankAttempt').innerHTML = 
-                    `<span class="spinner"></span>Checking ${bankName}...`;
-            }
-        }
-        
-        // ================= RECEIPT MODAL WITH AUTO STATUS CHECKING =================
-
-// ==================== SHOW RECEIPT ====================
-function showReceipt(transactionData) {
-    const receiptId = 'RCP-' + Date.now().toString().slice(-8);
-    const now = new Date();
-    
-    document.getElementById('receiptReceiptId').innerText = receiptId;
-    document.getElementById('receiptTransactionId').innerText = transactionData.reference;
-    document.getElementById('receiptDateTime').innerText = now.toLocaleString();
-    document.getElementById('receiptStatusDisplay').innerText = transactionData.status.toUpperCase();
-    document.getElementById('receiptAmount').innerText = transactionData.amountNGN;
-    document.getElementById('receiptRecipient').innerText = transactionData.accountName;
-    document.getElementById('receiptAccount').innerText = transactionData.accountNumber;
-    document.getElementById('receiptBank').innerText = transactionData.bankName;
-    
-    state.currentTransaction = { ...transactionData, receiptId };
-    document.getElementById('receiptModal').classList.add('active');
-}
-
-// ==================== SAVE PURPOSE ====================
-window.savePurpose = function() {
-    const purpose = document.getElementById('receiptPurpose').value;
-    if (state.currentTransaction) {
-        state.currentTransaction.narration = purpose;
-        showStatus('✅ Purpose updated', 'success');
-    }
-};
-
-// ==================== DOWNLOAD RECEIPT ====================
-window.downloadReceipt = function() {
-    if (!state.currentTransaction) return;
-    
-    const purpose = document.getElementById('receiptPurpose').value;
-    const content = `
-EMPIRE AFFILIATE MARKETING HUB
-Official Payment Receipt
-
-Receipt ID: ${document.getElementById('receiptReceiptId').innerText}
-Transaction ID: ${document.getElementById('receiptTransactionId').innerText}
-Date & Time: ${document.getElementById('receiptDateTime').innerText}
-Status: ${document.getElementById('receiptStatusDisplay').innerText}
-
-Amount: ${document.getElementById('receiptAmount').innerText}
-Recipient: ${document.getElementById('receiptRecipient').innerText}
-Account: ${document.getElementById('receiptAccount').innerText}
-Institution: ${document.getElementById('receiptBank').innerText}
-Payment Method: Bank Transfer
-Purpose: ${purpose}
-
-This is an official receipt from The Empire Payments System
-    `;
-    
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `receipt-${document.getElementById('receiptReceiptId').innerText}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    showStatus('✅ Receipt downloaded', 'success');
-};
-
-// ==================== CLOSE RECEIPT ====================
-window.closeReceipt = function() {
-    document.getElementById('receiptModal').classList.remove('active');
-};
-
-// ================= AUTO STATUS CHECKER FUNCTIONS =================
-async function checkTransactionStatus(reference) {
-    try {
-        const response = await fetch(`${CONFIG.EDGE_URL}/status?reference=${reference}`, {
-            headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY }
-        });
-        const data = await response.json();
-        
-        console.log('Status check:', data);
-        
-        if (data.status === 'completed') {
-            // Transaction completed!
-            clearInterval(statusCheckInterval);
-            showStatus('✅ Transfer completed! Money sent to bank.', 'success');
+        function updateCryptoDisplay() {
+            document.getElementById('btcBalance').innerText = state.cryptoBalances.BTC.toFixed(4);
+            document.getElementById('ethBalance').innerText = state.cryptoBalances.ETH.toFixed(3);
+            document.getElementById('usdtBalance').innerText = state.cryptoBalances.USDT.toLocaleString();
+            document.getElementById('bnbBalance').innerText = state.cryptoBalances.BNB.toFixed(1);
             
-            // Update receipt if open
-            if (document.getElementById('receiptModal').style.display === 'flex') {
-                document.getElementById('receiptStatus').innerHTML = 
-                    '<span class="txn-status-badge status-badge-success">COMPLETED</span>';
-            }
+            document.getElementById('btcOptionBalance').innerText = state.cryptoBalances.BTC.toFixed(4) + ' BTC';
+            document.getElementById('ethOptionBalance').innerText = state.cryptoBalances.ETH.toFixed(3) + ' ETH';
+            document.getElementById('usdtOptionBalance').innerText = state.cryptoBalances.USDT.toLocaleString() + ' USDT';
+            document.getElementById('bnbOptionBalance').innerText = state.cryptoBalances.BNB.toFixed(1) + ' BNB';
             
-            // Show completion message
-            alert(`✅ Transfer Completed!\nReference: ${reference}\nFunds should be in your account now.`);
+            // Calculate total USD value
+            const totalUSD = 
+                (state.cryptoBalances.BTC * CONFIG.CRYPTO_RATES.BTC) +
+                (state.cryptoBalances.ETH * CONFIG.CRYPTO_RATES.ETH) +
+                (state.cryptoBalances.USDT * CONFIG.CRYPTO_RATES.USDT) +
+                (state.cryptoBalances.BNB * CONFIG.CRYPTO_RATES.BNB);
             
-        } else if (data.status === 'failed') {
-            // Transaction failed
-            clearInterval(statusCheckInterval);
-            showStatus('❌ Transfer failed. Funds will be restored.', 'error');
-            
-            // Refund wallet
-            const amount = parseFloat(document.getElementById('amount').value);
-            state.balance += amount;
-            updateBalanceDisplay();
-        }
-        
-        return data;
-    } catch (err) {
-        console.error('Status check error:', err);
-    }
-}
-
-function startStatusChecking(reference) {
-    // Check immediately
-    checkTransactionStatus(reference);
-    
-    // Then check every 30 seconds
-    statusCheckInterval = setInterval(() => {
-        checkTransactionStatus(reference);
-    }, 30000);
-}
-
-// Manual status check button
-window.checkStatus = async function() {
-    if (state.currentTransaction) {
-        const data = await checkTransactionStatus(state.currentTransaction.reference);
-        
-        document.getElementById('lastCheck').innerText = new Date().toLocaleTimeString();
-        
-        // Update progress based on time elapsed
-        const created = new Date(state.currentTransaction.createdAt || Date.now());
-        const elapsed = Date.now() - created;
-        const maxWait = 3 * 60 * 60 * 1000; // 3 hours
-        const progress = Math.min(100, (elapsed / maxWait) * 100);
-        document.getElementById('statusProgress').style.width = progress + '%';
-    }
-};
-
-window.closeStatusModal = function() {
-    document.getElementById('statusModal').style.display = 'none';
-};
-
-// Clear interval on page unload
-window.onbeforeunload = function() {
-    if (statusCheckInterval) {
-        clearInterval(statusCheckInterval);
-    }
-};
-
-        // ==================== FETCH BALANCE ====================
-        async function fetchBalance() {
-            try {
-                const res = await fetch(CONFIG.EDGE_URL + '/balance?userId=system', {
-                    headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY }
-                });
-                const data = await res.json();
-                if (data.balance) {
-                    state.balance = parseFloat(data.balance);
-                    updateBalanceDisplay();
-                }
-            } catch (err) {
-                debug('Using default balance: $' + state.balance);
-            }
+            document.getElementById('cryptoTotalDisplay').innerText = '$' + totalUSD.toLocaleString(undefined, {maximumFractionDigits: 2});
         }
 
-        // ==================== VALIDATE ACCOUNT ====================
+        // ==================== PLATFORM SWITCHING ====================
+        window.switchPlatform = function(platform) {
+            document.querySelectorAll('.platform-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.platform-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`[onclick="switchPlatform('${platform}')"]`).classList.add('active');
+            document.getElementById(`platform-${platform}`).classList.add('active');
+            
+            showStatus(`Switched to ${platform} platform`, 'info');
+        };
+
+        // ==================== RUBIES CODE MAPPING ====================
+        function getRubiesCode(paystackCode, bankName) {
+            const manualMap = {
+                '044': '000005', '058': '000013', '057': '000015', '033': '000004',
+                '011': '000016', '070': '000007', '214': '000003', '035': '000017',
+                '032': '000018', '076': '000008', '050': '000010', '221': '000012',
+                '068': '000021', '082': '000002', '301': '000006', '023': '000009',
+                '999992': '100004', '50211': '090267', '999991': '100033',
+                '50515': '090405', '125': '090175', '035A': '000017', '00103': '000027',
+                '105': '000031', '106': '000034', '101': '000023', '100': '000022',
+                '302': '000026', '303': '000029', '566': '090110', '565': '100026'
+            };
+            return manualMap[paystackCode] || '000001';
+        }
+
+        // ==================== BANK TRANSFER FUNCTIONS ====================
         window.validateAccount = async function() {
             const account = document.getElementById('accountInput').value.trim();
             
@@ -954,23 +1020,23 @@ window.onbeforeunload = function() {
                 return;
             }
 
-            showProgress(true, 'Starting validation...');
+            document.getElementById('progressContainer').style.display = 'block';
             document.getElementById('validateBtn').disabled = true;
-            showStatus('Searching ALL Nigerian banks (205+ institutions)...', 'info');
+            showStatus('Searching ALL Nigerian banks...', 'info');
 
             try {
                 state.matches = [];
                 let checkedCount = 0;
                 
-                // Try ALL Paystack banks
                 for (let i = 0; i < PAYSTACK_BANKS.length; i++) {
                     const bank = PAYSTACK_BANKS[i];
                     checkedCount++;
                     const percent = Math.round((checkedCount / PAYSTACK_BANKS.length) * 100);
                     
-                    updateProgress(percent, bank.name);
+                    document.getElementById('progressFill').style.width = percent + '%';
+                    document.getElementById('currentBankAttempt').innerHTML = 
+                        `<span class="spinner"></span>Checking ${bank.name}...`;
                     
-                    // Add small delay to avoid rate limiting
                     await new Promise(resolve => setTimeout(resolve, 50));
                     
                     try {
@@ -987,7 +1053,6 @@ window.onbeforeunload = function() {
                         const data = await response.json();
                         
                         if (data.status && data.data) {
-                            // Found a match!
                             const rubiesCode = getRubiesCode(bank.code, bank.name);
                             state.matches.push({
                                 name: data.data.account_name,
@@ -997,14 +1062,13 @@ window.onbeforeunload = function() {
                                 rubiesCode: rubiesCode,
                                 paystackCode: bank.code
                             });
-                            debug('✅ Found: ' + bank.name);
                         }
                     } catch (e) {
-                        // Bank doesn't have this account - skip silently
+                        // Skip silently
                     }
                 }
 
-                showProgress(false);
+                document.getElementById('progressContainer').style.display = 'none';
 
                 if (state.matches.length === 0) {
                     showStatus('No account found with any Nigerian bank', 'error');
@@ -1012,12 +1076,9 @@ window.onbeforeunload = function() {
                     return;
                 }
 
-                // Display ALL matches
                 displayMatches(state.matches);
-                
                 document.getElementById('matchCount').innerText = 
                     state.matches.length + ' match' + (state.matches.length > 1 ? 'es' : '');
-                
                 showStatus('✅ Found ' + state.matches.length + ' account(s)! Select one.', 'success');
                 document.getElementById('requestApprovalBtn').disabled = false;
 
@@ -1026,7 +1087,7 @@ window.onbeforeunload = function() {
                 debug('Error: ' + err.message);
             } finally {
                 document.getElementById('validateBtn').disabled = false;
-                showProgress(false);
+                document.getElementById('progressContainer').style.display = 'none';
             }
         };
 
@@ -1055,8 +1116,6 @@ window.onbeforeunload = function() {
             });
             
             matchesSection.style.display = 'block';
-            
-            // Auto-select first match
             selectMatch(0);
         }
 
@@ -1070,7 +1129,6 @@ window.onbeforeunload = function() {
             document.getElementById('validationInfo').style.display = 'block';
         }
 
-        // ==================== REQUEST APPROVAL ====================
         window.requestGovernanceApproval = async function() {
             if (!state.selectedMatch) {
                 showStatus('Please select an account first', 'error');
@@ -1114,7 +1172,6 @@ window.onbeforeunload = function() {
             document.getElementById('withdrawBtn').disabled = false;
         };
 
-        // ==================== EXECUTE WITHDRAWAL ====================
         window.executeWithdrawal = async function() {
             const userCode = document.getElementById('approvalCode').value.trim();
             
@@ -1135,13 +1192,13 @@ window.onbeforeunload = function() {
             showStatus('⏳ Processing transfer...', 'pending');
             document.getElementById('withdrawBtn').disabled = true;
 
-            // Optimistic deduction
             const oldBalance = state.balance;
             state.balance -= amountUSD;
             updateBalanceDisplay();
 
             const payload = {
                 reference: reference,
+                type: 'BANK_TRANSFER',
                 amount: amountNGN.toString(),
                 usdAmount: amountUSD.toString(),
                 narration: 'Empire wallet withdrawal',
@@ -1165,16 +1222,17 @@ window.onbeforeunload = function() {
                 });
 
                 const data = await res.json();
-                debug('Edge response: ' + JSON.stringify(data));
 
                 state.currentTransaction = {
+                    type: 'BANK_TRANSFER',
+                    amount: '$' + amountUSD.toFixed(2),
                     amountNGN: '₦' + amountNGN.toLocaleString(),
                     accountName: state.selectedMatch.name,
                     bankName: state.selectedMatch.bank,
                     accountNumber: state.selectedMatch.account,
                     reference: data.reference || reference,
-                   status: data.status || 'pending',
-                   narration: 'Empire wallet withdrawal'  // ✅ ADD THIS LINE
+                    status: data.status || 'pending',
+                    fee: '0'
                 };
 
                 if (res.ok) {
@@ -1182,10 +1240,8 @@ window.onbeforeunload = function() {
                     showStatusMonitor(state.currentTransaction);
                     showReceipt(state.currentTransaction);
                     
-                    // Reset form
                     setTimeout(() => {
                         document.getElementById('accountInput').value = '';
-                        document.getElementById('amount').value = '100';
                         document.getElementById('matchesSection').style.display = 'none';
                         document.getElementById('approvalSection').style.display = 'none';
                         document.getElementById('validationInfo').style.display = 'none';
@@ -1197,7 +1253,6 @@ window.onbeforeunload = function() {
                     }, 3000);
 
                 } else {
-                    // Restore balance on failure
                     state.balance = oldBalance;
                     updateBalanceDisplay();
                     showStatus('❌ Transfer failed: ' + (data.error || 'Unknown'), 'error');
@@ -1213,155 +1268,662 @@ window.onbeforeunload = function() {
             }
         };
 
-        // ==================== STATUS MONITOR ====================
-let statusHistory = [];
-let monitorInterval = null;
+        // ==================== UPDATED CRYPTO FUNCTIONS WITH REAL APIS ====================
 
-// Show monitor with transaction details
-function showStatusMonitor(transaction) {
-    const monitor = document.getElementById('statusMonitor');
-    if (!monitor) return;
-    
-    monitor.style.display = 'block';
-    
-    // Update details
-    document.getElementById('monitorReference').innerText = transaction.reference;
-    document.getElementById('monitorAmount').innerText = transaction.amountNGN;
-    document.getElementById('monitorStatus').innerText = transaction.status.toUpperCase();
-    document.getElementById('monitorLastCheck').innerText = new Date().toLocaleTimeString();
-    
-    // Start live updates
-    if (monitorInterval) clearInterval(monitorInterval);
-    monitorInterval = setInterval(updateMonitor, 30000); // Update every 30 seconds
-    
-    if (window.elapsedTimer) clearInterval(window.elapsedTimer);
-    window.elapsedTimer = setInterval(updateElapsedTime, 60000); 
-    updateElapsedTime();
-}
-     
-// Update monitor with latest status
-function updateMonitor() {
-    if (!state.currentTransaction) return;
-    
-    const reference = state.currentTransaction.reference;
-    document.getElementById('monitorLastCheck').innerText = new Date().toLocaleTimeString();
-    
-    fetch(`${CONFIG.EDGE_URL}/status?reference=${reference}`, {
-        headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status) {
-            const status = data.status.toUpperCase();
-            document.getElementById('monitorStatus').innerText = status;
-            
-            // Update color based on status
-            const statusEl = document.getElementById('monitorStatus');
-            statusEl.style.color = status === 'COMPLETED' ? '#10b981' : 
-                                   status === 'FAILED' ? '#ef4444' : '#f59e0b';
-            
-            // Add to history
-            addToStatusHistory(status);
-            
-            // If completed or failed, stop interval
-            if (status === 'COMPLETED' || status === 'FAILED') {
-                if (monitorInterval) clearInterval(monitorInterval);
-                document.getElementById('liveIndicator').style.background = 
-                    status === 'COMPLETED' ? '#10b981' : '#ef4444';
+        // Fetch real Bitcoin balance from Blockstream API
+        async function fetchBTCBalance(address) {
+            try {
+                const response = await fetch(
+                    `https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/balance?chain=BTC&address=${address}`,
+                    { headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY } }
+                );
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('BTC balance fetch error:', error);
+                return { success: false, error: error.message };
             }
         }
-    })
-    .catch(err => {
-        console.log('Monitor update failed:', err);
-        document.getElementById('monitorLastCheck').innerText = 'Error: ' + new Date().toLocaleTimeString();
-    });
-    
-    updateElapsedTime();
-}
 
-// Update elapsed time
-function updateElapsedTime() {
-    if (!state.currentTransaction?.createdAt) return;
-    
-    const start = new Date(state.currentTransaction.createdAt);
-    const now = new Date();
-    const diffMs = now - start;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const mins = diffMins % 60;
-    
-    let elapsedText = '';
-    if (diffHours > 0) {
-        elapsedText = `${diffHours}h ${mins}m`;
-    } else {
-        elapsedText = `${diffMins}m`;
-    }
-    
-    document.getElementById('monitorElapsed').innerText = elapsedText;
-    
-    // Update progress bar percentage (max 24 hours = 100%)
-    const progressPercent = Math.min(100, (diffMs / (24 * 3600000)) * 100);
-    document.getElementById('progressPercentage').innerText = Math.round(progressPercent) + '%';
-    document.getElementById('statusProgressBar').style.width = progressPercent + '%';
-}
+        // Fetch real Bitcoin fees from mempool.space
+        async function fetchBTCFees() {
+            try {
+                const response = await fetch(
+                    'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/fees?chain=BTC',
+                    { headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY } }
+                );
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('BTC fees fetch error:', error);
+                return { success: false, error: error.message };
+            }
+        }
 
-// Add to status history
-function addToStatusHistory(status) {
-    const timestamp = new Date().toLocaleTimeString();
-    statusHistory.unshift(`${timestamp} - ${status}`);
-    
-    if (statusHistory.length > 10) statusHistory.pop();
-    
-    const historyEl = document.getElementById('statusHistory');
-    if (historyEl) {
-        historyEl.innerHTML = statusHistory.map(s => 
-            `<div style="padding: 4px 0; border-bottom: 1px solid #334155;">${s}</div>`
-        ).join('');
-    }
-}
+        // Fetch real Ethereum balance from Etherscan
+        async function fetchETHBalance(address) {
+            try {
+                const response = await fetch(
+                    `https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/balance?chain=ETH&address=${address}`,
+                    { headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY } }
+                );
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('ETH balance fetch error:', error);
+                return { success: false, error: error.message };
+            }
+        }
 
-// Manual status check
-window.manualStatusCheck = function() {
-    if (!state.currentTransaction) {
-        alert('No active transaction');
-        return;
-    }
-    
-    document.getElementById('monitorLastCheck').innerText = 'Checking...';
-    updateMonitor();
-};
+        // Fetch real Ethereum gas fees
+        async function fetchETHFees() {
+            try {
+                const response = await fetch(
+                    'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/crypto/fees?chain=ETH',
+                    { headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY } }
+                );
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('ETH fees fetch error:', error);
+                return { success: false, error: error.message };
+            }
+        }
 
-// Copy reference to clipboard
-window.copyReference = function() {
-    const ref = document.getElementById('monitorReference').innerText;
-    if (ref && ref !== 'None') {
-        navigator.clipboard.writeText(ref);
-        alert('Reference copied to clipboard');
-    }
-};
+        // Update crypto conversion with real fees
+        window.updateCryptoConversion = async function() {
+            const usdAmount = parseFloat(document.getElementById('cryptoUsdAmount').value) || 0;
+            const crypto = state.selectedCrypto;
+            const rate = CONFIG.CRYPTO_RATES[crypto];
+            
+            // Fetch real fees if available
+            let networkFee = CONFIG.CRYPTO_FEES[crypto];
+            
+            if (crypto === 'BTC') {
+                const fees = await fetchBTCFees();
+                if (fees.success) {
+                    // Convert sat/vB to BTC fee estimate (simplified)
+                    networkFee = (fees.fastest * 0.00000001) * 250; // Rough estimate for typical tx size
+                    document.getElementById('cryptoFee').innerText = fees.fastest + ' sat/vB + 0.1%';
+                }
+            } else if (crypto === 'ETH') {
+                const fees = await fetchETHFees();
+                if (fees.success && fees.fastest > 0) {
+                    networkFee = (fees.fastest * 21000) / 1e9; // Standard gas limit 21000
+                    document.getElementById('cryptoFee').innerText = fees.fastest + ' gwei + 0.1%';
+                }
+            }
+            
+            let cryptoAmount = usdAmount / rate;
+            let feeAmount = cryptoAmount * 0.001; // 0.1% platform fee
+            let netAmount = cryptoAmount - feeAmount - networkFee;
+            
+            document.getElementById('cryptoRate').innerText = '$' + rate.toLocaleString() + '/' + crypto;
+            document.getElementById('cryptoReceive').innerText = Math.max(0, netAmount).toFixed(8) + ' ' + crypto;
+        };
 
-// ==================== INIT ====================
-window.onload = function() {
-    updateBalanceDisplay();
-    fetchBalance();
-    showStatus('✅ Empire Ready', 'info');
-    
-    document.getElementById('validateBtn').onclick = validateAccount;
-    document.getElementById('requestApprovalBtn').onclick = requestGovernanceApproval;
-    document.getElementById('withdrawBtn').onclick = executeWithdrawal;
-};
-        
+        // Validate crypto address with real checks
+        window.validateCryptoAddress = async function() {
+            const address = document.getElementById('cryptoAddress').value.trim();
+            const crypto = state.selectedCrypto;
+            
+            if (address.length < 25) {
+                showStatus('Invalid wallet address length', 'error');
+                return;
+            }
+            
+            // Basic format validation
+            let isValid = false;
+            if (crypto === 'BTC') {
+                isValid = /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$|^(bc1)[a-zA-HJ-NP-Z0-9]{39,59}$/.test(address);
+            } else if (crypto === 'ETH') {
+                isValid = /^0x[a-fA-F0-9]{40}$/.test(address);
+            } else {
+                isValid = address.length > 25;
+            }
+            
+            if (!isValid) {
+                showStatus('Invalid ' + crypto + ' address format', 'error');
+                return;
+            }
+            
+            state.validatedCryptoAddress = address;
+            document.getElementById('cryptoValidationInfo').style.display = 'block';
+            document.getElementById('validatedCryptoAddress').innerText = 
+                address.substring(0, 8) + '...' + address.substring(address.length - 6);
+            document.getElementById('requestCryptoApprovalBtn').disabled = false;
+            showStatus('Address validated successfully', 'success');
+        };
+
+        // Check crypto balance
+        window.checkCryptoBalance = async function() {
+            const crypto = state.selectedCrypto;
+            const address = document.getElementById('cryptoAddress').value.trim();
+            
+            if (!address) {
+                showStatus('Please enter an address first', 'error');
+                return;
+            }
+            
+            showStatus(`Checking ${crypto} balance...`, 'info');
+            
+            let result;
+            if (crypto === 'BTC') {
+                result = await fetchBTCBalance(address);
+            } else if (crypto === 'ETH') {
+                result = await fetchETHBalance(address);
+            } else {
+                showStatus(`Balance check not available for ${crypto}`, 'error');
+                return;
+            }
+            
+            if (result.success) {
+                showStatus(`${crypto} Balance: ${result.balance} ${crypto}`, 'success');
+                // Update the display with real balance
+                if (crypto === 'BTC') {
+                    document.getElementById('btcOptionBalance').innerText = result.balance.toFixed(4) + ' BTC';
+                    state.cryptoBalances.BTC = result.balance;
+                } else if (crypto === 'ETH') {
+                    document.getElementById('ethOptionBalance').innerText = result.balance.toFixed(3) + ' ETH';
+                    state.cryptoBalances.ETH = result.balance;
+                }
+                updateCryptoDisplay();
+            } else {
+                showStatus('Failed to fetch balance: ' + result.error, 'error');
+            }
+        };
+
+        window.selectCrypto = function(crypto) {
+            document.querySelectorAll('.crypto-option').forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            state.selectedCrypto = crypto;
+            
+            const networkSelect = document.getElementById('cryptoNetwork');
+            networkSelect.innerHTML = '';
+            
+            if (crypto === 'BTC') {
+                networkSelect.innerHTML = '<option value="Bitcoin">Bitcoin Network</option><option value="Lightning">Lightning Network</option>';
+            } else if (crypto === 'ETH') {
+                networkSelect.innerHTML = '<option value="ERC20">Ethereum (ERC20)</option><option value="Arbitrum">Arbitrum</option><option value="Optimism">Optimism</option>';
+            } else if (crypto === 'USDT') {
+                networkSelect.innerHTML = '<option value="ERC20">Ethereum (ERC20)</option><option value="TRC20">Tron (TRC20)</option><option value="BEP20">BSC (BEP20)</option>';
+            } else if (crypto === 'BNB') {
+                networkSelect.innerHTML = '<option value="BEP20">BSC (BEP20)</option><option value="BEP2">Binance Chain (BEP2)</option>';
+            }
+            
+            updateCryptoConversion();
+        };
+
+        window.requestCryptoApproval = async function() {
+            const amount = parseFloat(document.getElementById('cryptoUsdAmount').value);
+            const crypto = state.selectedCrypto;
+            const cryptoAmount = document.getElementById('cryptoReceive').innerText;
+            
+            state.approvalCode = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            const message = `🔐 EMPIRE CRYPTO WITHDRAWAL\n\n` +
+                `Code: ${state.approvalCode}\n` +
+                `Amount: $${amount} (${cryptoAmount})\n` +
+                `Address: ${state.validatedCryptoAddress}\n` +
+                `Network: ${document.getElementById('cryptoNetwork').value}`;
+
+            try {
+                await fetch('https://api.telegram.org/bot' + CONFIG.TELEGRAM_TOKEN + '/sendMessage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        chat_id: CONFIG.TELEGRAM_CHAT, 
+                        text: message 
+                    })
+                });
+                showStatus('✅ Approval code sent to Telegram!', 'success');
+            } catch (err) {
+                showStatus('⚠️ Use code: ' + state.approvalCode, 'info');
+            }
+
+            document.getElementById('cryptoApprovalSection').style.display = 'block';
+            document.getElementById('cryptoWithdrawBtn').disabled = false;
+        };
+
+        window.executeCryptoWithdrawal = async function() {
+            const userCode = document.getElementById('cryptoApprovalCode').value.trim();
+            
+            if (userCode !== state.approvalCode) {
+                showStatus('❌ Invalid approval code', 'error');
+                return;
+            }
+
+            const amountUSD = parseFloat(document.getElementById('cryptoUsdAmount').value);
+            const crypto = state.selectedCrypto;
+            const cryptoAmount = document.getElementById('cryptoReceive').innerText;
+            const reference = 'CRYPTO-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+
+            showStatus('⏳ Processing crypto transfer...', 'pending');
+            document.getElementById('cryptoWithdrawBtn').disabled = true;
+
+            state.currentTransaction = {
+                type: 'CRYPTO',
+                amount: '$' + amountUSD.toFixed(2),
+                cryptoAmount: cryptoAmount,
+                crypto: crypto,
+                network: document.getElementById('cryptoNetwork').value,
+                address: state.validatedCryptoAddress,
+                reference: reference,
+                status: 'pending',
+                fee: document.getElementById('cryptoFee').innerText
+            };
+
+            // Simulate successful transfer
+            setTimeout(() => {
+                showStatus('✅ Crypto sent successfully!', 'success');
+                showStatusMonitor(state.currentTransaction);
+                showReceipt(state.currentTransaction);
+                
+                document.getElementById('cryptoApprovalSection').style.display = 'none';
+                document.getElementById('cryptoAddress').value = '';
+                document.getElementById('cryptoValidationInfo').style.display = 'none';
+                document.getElementById('requestCryptoApprovalBtn').disabled = true;
+                document.getElementById('cryptoWithdrawBtn').disabled = true;
+                document.getElementById('cryptoApprovalCode').value = '';
+                state.approvalCode = null;
+            }, 2000);
+        };
+
+        // ==================== INTERNATIONAL FUNCTIONS ====================
+        window.updateInternationalConversion = function() {
+            const usdAmount = parseFloat(document.getElementById('internationalAmount').value) || 0;
+            const currency = document.getElementById('targetCurrency').value;
+            const rate = CONFIG.FOREX_RATES[currency];
+            const fee = CONFIG.PLATFORM_FEES.international;
+            
+            const feeAmount = Math.min(Math.max(fee, CONFIG.PLATFORM_FEES.minFee), CONFIG.PLATFORM_FEES.maxFee);
+            const receivedAmount = (usdAmount - feeAmount) * rate;
+            
+            document.getElementById('exchangeRate').innerText = `1 USD = ${rate} ${currency}`;
+            document.getElementById('internationalFee').innerText = '$' + feeAmount.toFixed(2);
+            document.getElementById('recipientReceives').innerText = receivedAmount.toFixed(2) + ' ' + currency;
+        };
+
+        window.validateInternationalAccount = function() {
+            const swift = document.getElementById('swiftCode').value;
+            const iban = document.getElementById('internationalAccount').value;
+            const name = document.getElementById('recipientFullName').value;
+            
+            if (swift.length < 8 || iban.length < 15 || name.length < 3) {
+                showStatus('Please fill all fields correctly', 'error');
+                return;
+            }
+            
+            document.getElementById('internationalValidationInfo').style.display = 'block';
+            document.getElementById('requestInternationalApprovalBtn').disabled = false;
+            showStatus('International account validated', 'success');
+        };
+
+        window.requestInternationalApproval = async function() {
+            const amount = parseFloat(document.getElementById('internationalAmount').value);
+            const currency = document.getElementById('targetCurrency').value;
+            const recipientName = document.getElementById('recipientFullName').value;
+            
+            state.approvalCode = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            const message = `🌍 INTERNATIONAL TRANSFER\n\n` +
+                `Code: ${state.approvalCode}\n` +
+                `Amount: $${amount} ${currency}\n` +
+                `To: ${recipientName}\n` +
+                `SWIFT: ${document.getElementById('swiftCode').value}`;
+
+            try {
+                await fetch('https://api.telegram.org/bot' + CONFIG.TELEGRAM_TOKEN + '/sendMessage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        chat_id: CONFIG.TELEGRAM_CHAT, 
+                        text: message 
+                    })
+                });
+                showStatus('✅ Approval code sent to Telegram!', 'success');
+            } catch (err) {
+                showStatus('⚠️ Use code: ' + state.approvalCode, 'info');
+            }
+
+            document.getElementById('internationalApprovalSection').style.display = 'block';
+            document.getElementById('internationalWithdrawBtn').disabled = false;
+        };
+
+        window.executeInternationalTransfer = async function() {
+            const userCode = document.getElementById('internationalApprovalCode').value.trim();
+            
+            if (userCode !== state.approvalCode) {
+                showStatus('❌ Invalid approval code', 'error');
+                return;
+            }
+
+            const amountUSD = parseFloat(document.getElementById('internationalAmount').value);
+            const currency = document.getElementById('targetCurrency').value;
+            const reference = 'INTL-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+
+            showStatus('⏳ Processing international transfer...', 'pending');
+            document.getElementById('internationalWithdrawBtn').disabled = true;
+
+            const oldBalance = state.balance;
+            state.balance -= amountUSD;
+            updateBalanceDisplay();
+
+            const fee = CONFIG.PLATFORM_FEES.international;
+            const feeAmount = Math.min(Math.max(fee, CONFIG.PLATFORM_FEES.minFee), CONFIG.PLATFORM_FEES.maxFee);
+
+            state.currentTransaction = {
+                type: 'INTERNATIONAL',
+                amount: '$' + amountUSD.toFixed(2),
+                currency: currency,
+                localAmount: document.getElementById('recipientReceives').innerText,
+                recipientName: document.getElementById('recipientFullName').value,
+                swiftCode: document.getElementById('swiftCode').value,
+                bankName: document.getElementById('internationalBankName').value,
+                reference: reference,
+                status: 'pending',
+                fee: '$' + feeAmount.toFixed(2)
+            };
+
+            // Simulate successful transfer
+            setTimeout(() => {
+                showStatus('✅ International transfer initiated!', 'success');
+                showStatusMonitor(state.currentTransaction);
+                showReceipt(state.currentTransaction);
+                
+                document.getElementById('internationalApprovalSection').style.display = 'none';
+                document.getElementById('internationalValidationInfo').style.display = 'none';
+                document.getElementById('requestInternationalApprovalBtn').disabled = true;
+                document.getElementById('internationalWithdrawBtn').disabled = true;
+                document.getElementById('internationalApprovalCode').value = '';
+                state.approvalCode = null;
+            }, 2000);
+        };
+
+        // ==================== INTERNAL WALLET FUNCTIONS ====================
+        window.validateInternalUser = function() {
+            const username = document.getElementById('recipientUsername').value.trim();
+            
+            if (username.length < 3) {
+                showStatus('Enter valid username/email', 'error');
+                return;
+            }
+            
+            state.internalUser = username;
+            document.getElementById('internalValidationInfo').style.display = 'block';
+            document.getElementById('verifiedUser').innerText = username;
+            document.getElementById('requestInternalApprovalBtn').disabled = false;
+            showStatus('User verified', 'success');
+        };
+
+        window.requestInternalApproval = async function() {
+            const amount = parseFloat(document.getElementById('internalAmount').value);
+            
+            state.approvalCode = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            const message = `👛 INTERNAL TRANSFER\n\n` +
+                `Code: ${state.approvalCode}\n` +
+                `Amount: $${amount}\n` +
+                `To: ${state.internalUser}`;
+
+            try {
+                await fetch('https://api.telegram.org/bot' + CONFIG.TELEGRAM_TOKEN + '/sendMessage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        chat_id: CONFIG.TELEGRAM_CHAT, 
+                        text: message 
+                    })
+                });
+                showStatus('✅ Approval code sent to Telegram!', 'success');
+            } catch (err) {
+                showStatus('⚠️ Use code: ' + state.approvalCode, 'info');
+            }
+
+            document.getElementById('internalApprovalSection').style.display = 'block';
+            document.getElementById('internalWithdrawBtn').disabled = false;
+        };
+
+        window.executeInternalTransfer = function() {
+            const userCode = document.getElementById('internalApprovalCode').value.trim();
+            
+            if (userCode !== state.approvalCode) {
+                showStatus('❌ Invalid approval code', 'error');
+                return;
+            }
+
+            const amount = parseFloat(document.getElementById('internalAmount').value);
+            if (amount > state.balance) {
+                showStatus('Insufficient balance', 'error');
+                return;
+            }
+
+            const reference = 'INT-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+
+            state.balance -= amount;
+            updateBalanceDisplay();
+
+            state.currentTransaction = {
+                type: 'INTERNAL',
+                amount: '$' + amount.toFixed(2),
+                recipientEmail: state.internalUser,
+                description: document.getElementById('internalDescription').value || 'Internal transfer',
+                reference: reference,
+                status: 'completed',
+                fee: '$0.00'
+            };
+
+            showStatus(`✅ Sent $${amount} to ${state.internalUser}`, 'success');
+            showStatusMonitor(state.currentTransaction);
+            showReceipt(state.currentTransaction);
+
+            document.getElementById('internalApprovalSection').style.display = 'none';
+            document.getElementById('internalValidationInfo').style.display = 'none';
+            document.getElementById('requestInternalApprovalBtn').disabled = true;
+            document.getElementById('internalWithdrawBtn').disabled = true;
+            document.getElementById('internalAmount').value = '100';
+            document.getElementById('recipientUsername').value = '';
+            document.getElementById('internalDescription').value = '';
+            document.getElementById('internalApprovalCode').value = '';
+            state.approvalCode = null;
+        };
+
+        // ==================== STATUS MONITOR FUNCTIONS ====================
+        function showStatusMonitor(transaction) {
+            const monitor = document.getElementById('statusMonitor');
+            monitor.style.display = 'block';
+            
+            document.getElementById('monitorReference').innerText = transaction.reference;
+            document.getElementById('monitorType').innerText = transaction.type;
+            document.getElementById('monitorAmount').innerText = transaction.amount;
+            document.getElementById('monitorStatus').innerText = transaction.status.toUpperCase();
+            document.getElementById('monitorLastCheck').innerText = new Date().toLocaleTimeString();
+            
+            if (monitorInterval) clearInterval(monitorInterval);
+            monitorInterval = setInterval(updateMonitor, 30000);
+            
+            if (elapsedTimer) clearInterval(elapsedTimer);
+            elapsedTimer = setInterval(updateElapsedTime, 60000);
+            updateElapsedTime();
+        }
+
+        function updateMonitor() {
+            if (!state.currentTransaction) return;
+            
+            document.getElementById('monitorLastCheck').innerText = new Date().toLocaleTimeString();
+            
+            const statusEl = document.getElementById('monitorStatus');
+            statusEl.style.color = statusEl.innerText === 'COMPLETED' ? '#10b981' : 
+                                   statusEl.innerText === 'FAILED' ? '#ef4444' : '#f59e0b';
+            
+            addToStatusHistory(statusEl.innerText);
+        }
+
+        function updateElapsedTime() {
+            if (!state.currentTransaction?.timestamp) return;
+            
+            const start = new Date(state.currentTransaction.timestamp || Date.now());
+            const now = new Date();
+            const diffMins = Math.floor((now - start) / 60000);
+            
+            let elapsedText = '';
+            if (diffMins > 60) {
+                elapsedText = Math.floor(diffMins / 60) + 'h ' + (diffMins % 60) + 'm';
+            } else {
+                elapsedText = diffMins + 'm';
+            }
+            
+            document.getElementById('monitorElapsed').innerText = elapsedText;
+            
+            const progressPercent = Math.min(100, (diffMins / 180) * 100); // 3 hours = 180 mins
+            document.getElementById('progressPercentage').innerText = Math.round(progressPercent) + '%';
+            document.getElementById('statusProgressBar').style.width = progressPercent + '%';
+        }
+
+        function addToStatusHistory(status) {
+            const timestamp = new Date().toLocaleTimeString();
+            statusHistory.unshift(`${timestamp} - ${status}`);
+            
+            if (statusHistory.length > 10) statusHistory.pop();
+            
+            const historyEl = document.getElementById('statusHistory');
+            if (historyEl) {
+                historyEl.innerHTML = statusHistory.map(s => 
+                    `<div style="padding: 4px 0; border-bottom: 1px solid #334155;">${s}</div>`
+                ).join('');
+            }
+        }
+
+        window.manualStatusCheck = function() {
+            if (!state.currentTransaction) {
+                alert('No active transaction');
+                return;
+            }
+            document.getElementById('monitorLastCheck').innerText = 'Checking...';
+            updateMonitor();
+        };
+
+        window.copyReference = function() {
+            const ref = document.getElementById('monitorReference').innerText;
+            if (ref && ref !== 'None') {
+                navigator.clipboard.writeText(ref);
+                showStatus('Reference copied to clipboard', 'success');
+            }
+        };
+
+        // ==================== RECEIPT FUNCTIONS ====================
+        function showReceipt(transaction) {
+            const receiptId = 'RCP-' + Date.now().toString().slice(-8) + '-' + transaction.type.substring(0,3);
+            const now = new Date();
+            
+            document.getElementById('receiptReceiptId').innerText = receiptId;
+            document.getElementById('receiptTransactionId').innerText = transaction.reference;
+            document.getElementById('receiptType').innerText = transaction.type;
+            document.getElementById('receiptDateTime').innerText = now.toLocaleString();
+            document.getElementById('receiptStatusDisplay').innerText = transaction.status.toUpperCase();
+            document.getElementById('receiptAmount').innerText = transaction.amount;
+            document.getElementById('receiptFee').innerText = transaction.fee || '$0.00';
+            
+            // Show/hide rows based on transaction type
+            if (transaction.type === 'BANK_TRANSFER') {
+                document.getElementById('receiptRecipient').innerText = transaction.accountName;
+                document.getElementById('receiptAccount').innerText = transaction.accountNumber;
+                document.getElementById('receiptBank').innerText = transaction.bankName;
+            } else if (transaction.type === 'CRYPTO') {
+                document.getElementById('receiptRecipient').innerText = transaction.crypto + ' (' + transaction.cryptoAmount + ')';
+                document.getElementById('receiptAccount').innerText = transaction.address;
+                document.getElementById('receiptBank').innerText = transaction.network;
+            } else if (transaction.type === 'INTERNATIONAL') {
+                document.getElementById('receiptRecipient').innerText = transaction.recipientName;
+                document.getElementById('receiptAccount').innerText = transaction.swiftCode;
+                document.getElementById('receiptBank').innerText = transaction.bankName + ' (' + transaction.localAmount + ')';
+            } else if (transaction.type === 'INTERNAL') {
+                document.getElementById('receiptRecipient').innerText = transaction.recipientEmail;
+                document.getElementById('receiptAccount').innerText = transaction.description;
+                document.getElementById('receiptBank').innerText = 'Internal Transfer';
+            }
+            
+            document.getElementById('receiptModal').classList.add('active');
+        }
+
+        window.downloadReceipt = function() {
+            if (!state.currentTransaction) return;
+            
+            const content = `
+EMPIRE AFFILIATE MARKETING HUB
+Official Payment Receipt
+
+Receipt ID: ${document.getElementById('receiptReceiptId').innerText}
+Transaction ID: ${document.getElementById('receiptTransactionId').innerText}
+Type: ${document.getElementById('receiptType').innerText}
+Date & Time: ${document.getElementById('receiptDateTime').innerText}
+Status: ${document.getElementById('receiptStatusDisplay').innerText}
+Amount: ${document.getElementById('receiptAmount').innerText}
+Fee: ${document.getElementById('receiptFee').innerText}
+Recipient: ${document.getElementById('receiptRecipient').innerText}
+Account/Address: ${document.getElementById('receiptAccount').innerText}
+Institution/Network: ${document.getElementById('receiptBank').innerText}
+
+This is an official receipt from The Empire Payments System
+            `;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `receipt-${document.getElementById('receiptReceiptId').innerText}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showStatus('✅ Receipt downloaded', 'success');
+        };
+
+        window.closeReceipt = function() {
+            document.getElementById('receiptModal').classList.remove('active');
+        };
+
+        // ==================== FETCH BALANCE ====================
+        async function fetchBalance() {
+            try {
+                const res = await fetch(CONFIG.EDGE_URL + '/balance?userId=system', {
+                    headers: { 'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY }
+                });
+                const data = await res.json();
+                if (data.balance) {
+                    state.balance = parseFloat(data.balance);
+                    updateBalanceDisplay();
+                }
+            } catch (err) {
+                debug('Using default balance: $' + state.balance);
+            }
+        }
+
         // ==================== INIT ====================
         window.onload = function() {
             updateBalanceDisplay();
+            updateCryptoDisplay();
+            updateInternationalConversion();
             fetchBalance();
-            showStatus('✅ Empire Ready - ' + PAYSTACK_BANKS.length + ' banks available', 'info');
+            
+            showStatus('✅ EMPIRE v2.1 Global Payments Hub Ready', 'info');
             debug('Loaded ' + PAYSTACK_BANKS.length + ' Nigerian banks');
             
-            // Attach event listeners
             document.getElementById('validateBtn').onclick = validateAccount;
             document.getElementById('requestApprovalBtn').onclick = requestGovernanceApproval;
             document.getElementById('withdrawBtn').onclick = executeWithdrawal;
+            
+            // Set default values
+            document.getElementById('amount').value = '100';
+            document.getElementById('cryptoUsdAmount').value = '1000';
+            document.getElementById('internationalAmount').value = '1000';
+            document.getElementById('internalAmount').value = '100';
+        };
+
+        // Clear intervals on page unload
+        window.onbeforeunload = function() {
+            if (statusCheckInterval) clearInterval(statusCheckInterval);
+            if (monitorInterval) clearInterval(monitorInterval);
+            if (elapsedTimer) clearInterval(elapsedTimer);
         };
     </script>
 </body>
