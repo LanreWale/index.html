@@ -1616,14 +1616,13 @@ async function broadcastCryptoTransaction(txHex, chain, fromAddress, toAddress, 
                 return;
             }
             
-            // Check if source address has sufficient balance
-            const cryptoAmountValue = parseFloat(cryptoAmount.split(' ')[0]);
-            const hasBalance = await checkSufficientBalance(fromAddress, crypto, cryptoAmountValue);
-            
-            if (!hasBalance) {
-                showStatus(`Insufficient balance in source address`, 'error');
-                return;
-            }
+            // const cryptoAmountValue = parseFloat(cryptoAmount.split(' ')[0]);
+// const hasBalance = await checkSufficientBalance(fromAddress, crypto, cryptoAmountValue);
+
+// if (!hasBalance) {
+//     showStatus(`Insufficient balance in source address`, 'error');
+//     return;
+// }
             
             state.approvalCode = Math.floor(100000 + Math.random() * 900000).toString();
             state.cryptoFromAddress = fromAddress;
@@ -2273,6 +2272,7 @@ This is an official receipt from The Empire Payments System
     </script>
 </body>
 </html>
+
 
 
 
