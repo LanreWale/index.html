@@ -233,7 +233,6 @@
     </style>
     <!-- PDF Generation Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -576,7 +575,7 @@
         <div id="debug"></div>
     </div>
 
-    <!-- RECEIPT MODAL (Updated as requested) -->
+    <!-- RECEIPT MODAL - CORRECTED FORMAT with "Empire" instead of "Employee" -->
     <div class="modal-overlay" id="receiptModal">
         <div class="modal-content">
             <div class="receipt-header">
@@ -605,12 +604,6 @@
                     <span class="receipt-value" id="receiptDateTime"></span>
                 </div>
                 
-                <!-- Status -->
-                <div class="receipt-row">
-                    <span class="receipt-label">Status:</span>
-                    <span class="receipt-value" id="receiptStatusDisplay"></span>
-                </div>
-                
                 <!-- Amount -->
                 <div class="receipt-row">
                     <span class="receipt-label">Amount:</span>
@@ -635,10 +628,17 @@
                     <span class="receipt-value" id="receiptBank"></span>
                 </div>
                 
-                <!-- Transaction Detail (NEW) -->
+                <!-- Transaction Detail (Editable Input Field) -->
                 <div class="receipt-row">
                     <span class="receipt-label">Transaction Detail:</span>
-                    <span class="receipt-value" id="receiptTransactionDetail"></span>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="text" id="receiptTransactionDetail" value="Affiliate payout" 
+                               style="background: #2d3a4f; border: 1px solid #FFD700; border-radius: 4px; 
+                                      padding: 8px; color: white; width: 200px;">
+                        <button onclick="saveTransactionDetail()" style="background: #10b981; border: none; 
+                                border-radius: 4px; padding: 6px 12px; color: white; cursor: pointer; 
+                                font-size: 12px; font-weight: 600;">SAVE</button>
+                    </div>
                 </div>
                 
                 <!-- Fee -->
@@ -648,7 +648,7 @@
                 </div>
             </div>
             
-            <!-- Official Note -->
+            <!-- Official Note - FIXED: "Empire" not "Employee" -->
             <div style="text-align: center; margin: 20px 0; font-style: italic; color: #94a3b8; font-size: 12px;">
                 This is an official receipt from The Empire Payments System
             </div>
@@ -670,7 +670,7 @@
     </div>
 
     <script>
-        // ==================== COMPLETE BANK LISTS (205+ Nigerian Banks) ====================
+        // ==================== COMPLETE BANK LISTS ====================
         const PAYSTACK_BANKS = [
             { code: '120001', name: '9mobile 9Payment Service Bank' },
             { code: '404', name: 'Abbey Mortgage Bank' },
@@ -990,7 +990,32 @@
         }
 
         function updateCryptoDisplay() {
-            // ... crypto display code (keep your existing implementation) ...
+            const btcEl = document.getElementById('btcBalance');
+            if (btcEl) btcEl.innerText = state.cryptoBalances.BTC.toFixed(4);
+            const ethEl = document.getElementById('ethBalance');
+            if (ethEl) ethEl.innerText = state.cryptoBalances.ETH.toFixed(3);
+            const usdtEl = document.getElementById('usdtBalance');
+            if (usdtEl) usdtEl.innerText = state.cryptoBalances.USDT.toLocaleString();
+            const bnbEl = document.getElementById('bnbBalance');
+            if (bnbEl) bnbEl.innerText = state.cryptoBalances.BNB.toFixed(1);
+            
+            const btcOpt = document.getElementById('btcOptionBalance');
+            if (btcOpt) btcOpt.innerText = state.cryptoBalances.BTC.toFixed(4) + ' BTC';
+            const ethOpt = document.getElementById('ethOptionBalance');
+            if (ethOpt) ethOpt.innerText = state.cryptoBalances.ETH.toFixed(3) + ' ETH';
+            const usdtOpt = document.getElementById('usdtOptionBalance');
+            if (usdtOpt) usdtOpt.innerText = state.cryptoBalances.USDT.toLocaleString() + ' USDT';
+            const bnbOpt = document.getElementById('bnbOptionBalance');
+            if (bnbOpt) bnbOpt.innerText = state.cryptoBalances.BNB.toFixed(1) + ' BNB';
+            
+            const totalUSD = 
+                (state.cryptoBalances.BTC * CONFIG.CRYPTO_RATES.BTC) +
+                (state.cryptoBalances.ETH * CONFIG.CRYPTO_RATES.ETH) +
+                (state.cryptoBalances.USDT * CONFIG.CRYPTO_RATES.USDT) +
+                (state.cryptoBalances.BNB * CONFIG.CRYPTO_RATES.BNB);
+            
+            const totalEl = document.getElementById('cryptoTotalDisplay');
+            if (totalEl) totalEl.innerText = '$' + totalUSD.toLocaleString(undefined, {maximumFractionDigits: 2});
         }
 
         // ==================== PLATFORM SWITCHING ====================
@@ -1243,7 +1268,7 @@
                     accountNumber: state.selectedMatch.account,
                     reference: data.reference || reference,
                     status: data.status || 'pending',
-                    fee: '0',
+                    fee: '$0.00',
                     narration: 'Bank withdrawal'
                 };
 
@@ -1309,7 +1334,7 @@
             const fee = CONFIG.CRYPTO_FEES[crypto];
             
             let cryptoAmount = usdAmount / rate;
-            let feeAmount = cryptoAmount * 0.001; // 0.1% platform fee
+            let feeAmount = cryptoAmount * 0.001;
             let netAmount = cryptoAmount - feeAmount - fee;
             
             document.getElementById('cryptoRate').innerText = '$' + rate.toLocaleString() + '/' + crypto;
@@ -1320,7 +1345,6 @@
         window.validateCryptoAddress = function() {
             const address = document.getElementById('cryptoAddress').value.trim();
             const crypto = state.selectedCrypto;
-            const network = document.getElementById('cryptoNetwork').value;
             
             if (address.length < 25) {
                 showStatus('Invalid wallet address length', 'error');
@@ -1392,10 +1416,9 @@
                 reference: reference,
                 status: 'pending',
                 fee: CONFIG.CRYPTO_FEES[crypto] + ' ' + crypto + ' + 0.1%',
-                narration: `${cryptoAmount} sent`
+                narration: cryptoAmount
             };
 
-            // Simulate successful transfer
             setTimeout(() => {
                 showStatus('✅ Crypto sent successfully!', 'success');
                 showStatusMonitor(state.currentTransaction);
@@ -1505,10 +1528,9 @@
                 reference: reference,
                 status: 'pending',
                 fee: '$' + feeAmount.toFixed(2),
-                narration: document.getElementById('recipientReceives').innerText || 'International payment'
+                narration: document.getElementById('recipientReceives').innerText
             };
 
-            // Simulate successful transfer
             setTimeout(() => {
                 showStatus('✅ International transfer initiated!', 'success');
                 showStatusMonitor(state.currentTransaction);
@@ -1659,7 +1681,7 @@
             
             document.getElementById('monitorElapsed').innerText = elapsedText;
             
-            const progressPercent = Math.min(100, (diffMins / 180) * 100); // 3 hours = 180 mins
+            const progressPercent = Math.min(100, (diffMins / 180) * 100);
             document.getElementById('progressPercentage').innerText = Math.round(progressPercent) + '%';
             document.getElementById('statusProgressBar').style.width = progressPercent + '%';
         }
@@ -1667,9 +1689,7 @@
         function addToStatusHistory(status) {
             const timestamp = new Date().toLocaleTimeString();
             statusHistory.unshift(`${timestamp} - ${status}`);
-            
             if (statusHistory.length > 10) statusHistory.pop();
-            
             const historyEl = document.getElementById('statusHistory');
             if (historyEl) {
                 historyEl.innerHTML = statusHistory.map(s => 
@@ -1695,7 +1715,7 @@
             }
         };
 
-        // ==================== RECEIPT FUNCTIONS (Updated) ====================
+        // ==================== RECEIPT FUNCTIONS ====================
         function showReceipt(transaction) {
             const receiptId = 'EMP-RCP-' + Date.now().toString().slice(-8);
             const now = new Date();
@@ -1703,44 +1723,50 @@
             document.getElementById('receiptReceiptId').innerText = receiptId;
             document.getElementById('receiptTransactionId').innerText = transaction.reference;
             document.getElementById('receiptDateTime').innerText = now.toLocaleString();
-            document.getElementById('receiptStatusDisplay').innerText = (transaction.status || 'completed').toUpperCase();
             document.getElementById('receiptAmount').innerText = transaction.amount;
             document.getElementById('receiptFee').innerText = transaction.fee || '$0.00';
             
-            // Set receipt fields based on transaction type
             if (transaction.type === 'BANK_TRANSFER') {
                 document.getElementById('receiptRecipient').innerText = transaction.accountName || 'N/A';
                 document.getElementById('receiptAccount').innerText = transaction.accountNumber || 'N/A';
                 document.getElementById('receiptBank').innerText = transaction.bankName || 'Bank Transfer';
-                document.getElementById('receiptTransactionDetail').innerText = transaction.narration || 'Bank withdrawal';
+                document.getElementById('receiptTransactionDetail').value = transaction.narration || 'Bank withdrawal';
             } 
             else if (transaction.type === 'CRYPTO') {
                 document.getElementById('receiptRecipient').innerText = transaction.crypto || 'Crypto';
                 document.getElementById('receiptAccount').innerText = transaction.address || 'N/A';
                 document.getElementById('receiptBank').innerText = transaction.network || 'Blockchain';
-                document.getElementById('receiptTransactionDetail').innerText = transaction.narration || `${transaction.cryptoAmount} sent`;
+                document.getElementById('receiptTransactionDetail').value = transaction.narration || 'Crypto sent';
             } 
             else if (transaction.type === 'INTERNATIONAL') {
                 document.getElementById('receiptRecipient').innerText = transaction.recipientName || 'N/A';
                 document.getElementById('receiptAccount').innerText = transaction.swiftCode || 'N/A';
                 document.getElementById('receiptBank').innerText = transaction.bankName || 'International Transfer';
-                document.getElementById('receiptTransactionDetail').innerText = transaction.narration || transaction.localAmount || 'International payment';
+                document.getElementById('receiptTransactionDetail').value = transaction.narration || 'International payment';
             } 
             else if (transaction.type === 'INTERNAL') {
                 document.getElementById('receiptRecipient').innerText = transaction.recipientEmail || 'N/A';
                 document.getElementById('receiptAccount').innerText = 'Internal Transfer';
                 document.getElementById('receiptBank').innerText = 'Empire Wallet';
-                document.getElementById('receiptTransactionDetail').innerText = transaction.narration || transaction.description || 'Internal transfer';
+                document.getElementById('receiptTransactionDetail').value = transaction.narration || 'Internal transfer';
             }
             else {
-                document.getElementById('receiptRecipient').innerText = transaction.destination || 'N/A';
+                document.getElementById('receiptRecipient').innerText = 'N/A';
                 document.getElementById('receiptAccount').innerText = 'See details';
                 document.getElementById('receiptBank').innerText = 'Transaction';
-                document.getElementById('receiptTransactionDetail').innerText = transaction.narration || 'Withdrawal processed';
+                document.getElementById('receiptTransactionDetail').value = transaction.narration || 'Withdrawal processed';
             }
             
             document.getElementById('receiptModal').classList.add('active');
         }
+
+        window.saveTransactionDetail = function() {
+            const detail = document.getElementById('receiptTransactionDetail').value;
+            if (state.currentTransaction) {
+                state.currentTransaction.narration = detail;
+                showStatus('✅ Transaction detail updated', 'success');
+            }
+        };
 
         window.downloadReceiptAsPDF = function() {
             if (!state.currentTransaction) return;
@@ -1748,10 +1774,9 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Set document properties
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(20);
-            doc.setTextColor(218, 165, 32); // Gold color
+            doc.setTextColor(218, 165, 32);
             doc.text('EMPIRE AFFILIATE MARKETING HUB', 20, 20);
             
             doc.setFontSize(14);
@@ -1759,11 +1784,9 @@
             doc.text('Official Payment Receipt', 20, 30);
             doc.text(new Date().toLocaleString(), 20, 38);
             
-            // Line separator
             doc.setDrawColor(218, 165, 32);
             doc.line(20, 45, 190, 45);
             
-            // Receipt details
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
@@ -1772,12 +1795,11 @@
                 ['Empire Receipt ID:', document.getElementById('receiptReceiptId').innerText],
                 ['Empire Transaction ID:', document.getElementById('receiptTransactionId').innerText],
                 ['Date & Time:', document.getElementById('receiptDateTime').innerText],
-                ['Status:', document.getElementById('receiptStatusDisplay').innerText],
                 ['Amount:', document.getElementById('receiptAmount').innerText],
                 ['Recipient:', document.getElementById('receiptRecipient').innerText],
                 ['Account/Address:', document.getElementById('receiptAccount').innerText],
                 ['Institution/Network:', document.getElementById('receiptBank').innerText],
-                ['Transaction Detail:', document.getElementById('receiptTransactionDetail').innerText],
+                ['Transaction Detail:', document.getElementById('receiptTransactionDetail').value],
                 ['Fee:', document.getElementById('receiptFee').innerText]
             ];
             
@@ -1790,14 +1812,12 @@
                 y += 8;
             });
             
-            // Footer
             y += 10;
             doc.setFont('helvetica', 'italic');
             doc.setFontSize(10);
             doc.setTextColor(150, 150, 150);
             doc.text('This is an official receipt from The Empire Payments System', 20, y);
             
-            // Save PDF
             doc.save(`Empire_Receipt_${document.getElementById('receiptReceiptId').innerText}.pdf`);
             showStatus('✅ Receipt downloaded as PDF', 'success');
         };
@@ -1836,14 +1856,12 @@
             document.getElementById('requestApprovalBtn').onclick = requestGovernanceApproval;
             document.getElementById('withdrawBtn').onclick = executeWithdrawal;
             
-            // Set default values
             document.getElementById('amount').value = '100';
             document.getElementById('cryptoUsdAmount').value = '1000';
             document.getElementById('internationalAmount').value = '1000';
             document.getElementById('internalAmount').value = '100';
         };
 
-        // Clear intervals on page unload
         window.onbeforeunload = function() {
             if (statusCheckInterval) clearInterval(statusCheckInterval);
             if (monitorInterval) clearInterval(monitorInterval);
