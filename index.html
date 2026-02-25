@@ -298,7 +298,7 @@
                 <div class="warning">Check Empire Telegram channel for your approval code</div>
             </div>
 
-            <button class="btn-success" id="withdrawBtn" disabled>💰 EXECUTE TRANSFER (Rubies)</button>
+            <button class="btn-success" id="withdrawBtn" disabled>💰 EXECUTE TRANSFER</button>
         </div>
 
         <!-- CRYPTO PLATFORM -->
@@ -1208,6 +1208,7 @@
             document.getElementById('withdrawBtn').disabled = false;
         };
 
+        // ==================== MODIFIED EXECUTE WITHDRAWAL WITH PROVIDER HEADER ====================
         window.executeWithdrawal = async function() {
             const userCode = document.getElementById('approvalCode').value.trim();
             
@@ -1248,11 +1249,16 @@
             };
 
             try {
+                // Determine which provider to use (can be made dynamic via UI or env)
+                // Options: 'rubies', 'mono', 'paystack', 'wise'
+                const provider = 'rubies'; // Change this to switch providers
+                
                 const res = await fetch(CONFIG.EDGE_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY
+                        'Authorization': 'Bearer ' + CONFIG.SUPABASE_KEY,
+                        'X-Payout-Provider': provider  // Provider header for translation layer
                     },
                     body: JSON.stringify(payload)
                 });
