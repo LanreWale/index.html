@@ -652,7 +652,283 @@
 
     <script>
         // ==================== COMPLETE BANK LISTS ====================
-        const PAYSTACK_BANKS = [ /* ... your full bank list ... */ ];
+        const PAYSTACK_BANKS = [
+            { code: '120001', name: '9mobile 9Payment Service Bank' },
+            { code: '404', name: 'Abbey Mortgage Bank' },
+            { code: '51204', name: 'Above Only MFB' },
+            { code: '51312', name: 'Abulesoro MFB' },
+            { code: '044', name: 'Access Bank' },
+            { code: '063', name: 'Access Bank (Diamond)' },
+            { code: '602', name: 'Accion Microfinance Bank' },
+            { code: '50315', name: 'Aella MFB' },
+            { code: '90077', name: 'AG Mortgage Bank' },
+            { code: '50036', name: 'Ahmadu Bello University Microfinance Bank' },
+            { code: '120004', name: 'Airtel Smartcash PSB' },
+            { code: '51336', name: 'AKU Microfinance Bank' },
+            { code: '090561', name: 'Akuchukwu Microfinance Bank Limited' },
+            { code: '035A', name: 'ALAT by WEMA' },
+            { code: '108', name: 'Alpha Morgan Bank' },
+            { code: '000304', name: 'Alternative bank' },
+            { code: '090629', name: 'Amegy Microfinance Bank' },
+            { code: '50926', name: 'Amju Unique MFB' },
+            { code: '50083', name: 'Aramoko MFB' },
+            { code: '401', name: 'ASO Savings and Loans' },
+            { code: '50092', name: 'Assets Microfinance Bank' },
+            { code: 'MFB50094', name: 'Astrapolaris MFB LTD' },
+            { code: '090478', name: 'AVUENEGBE MICROFINANCE BANK' },
+            { code: '51351', name: 'AWACASH MICROFINANCE BANK' },
+            { code: '51337', name: 'AZTEC MICROFINANCE BANK LIMITED' },
+            { code: '51229', name: 'Bainescredit MFB' },
+            { code: '50117', name: 'Banc Corp Microfinance Bank' },
+            { code: '50572', name: 'BANKIT MICROFINANCE BANK LTD' },
+            { code: '51341', name: 'BANKLY MFB' },
+            { code: 'MFB50992', name: 'Baobab Microfinance Bank' },
+            { code: '51100', name: 'BellBank Microfinance Bank' },
+            { code: '51267', name: 'Benysta Microfinance Bank Limited' },
+            { code: '50123', name: 'Beststar Microfinance Bank' },
+            { code: '50725', name: 'BOLD MFB' },
+            { code: '650', name: 'Bosak Microfinance Bank' },
+            { code: '50931', name: 'Bowen Microfinance Bank' },
+            { code: 'FC40163', name: 'Branch International Finance Company Limited' },
+            { code: '50645', name: 'BuyPower MFB' },
+            { code: '565', name: 'Carbon' },
+            { code: '51353', name: 'Cashbridge Microfinance Bank Limited' },
+            { code: '865', name: 'CASHCONNECT MFB' },
+            { code: '50823', name: 'CEMCS Microfinance Bank' },
+            { code: '50171', name: 'Chanelle Microfinance Bank Limited' },
+            { code: '312', name: 'Chikum Microfinance bank' },
+            { code: '023', name: 'Citibank Nigeria' },
+            { code: '070027', name: 'CITYCODE MORTAGE BANK' },
+            { code: '50910', name: 'Consumer Microfinance Bank' },
+            { code: '50204', name: 'Corestep MFB' },
+            { code: '559', name: 'Coronation Merchant Bank' },
+            { code: 'FC40128', name: 'County Finance Limited' },
+            { code: '40119', name: 'Credit Direct Limited' },
+            { code: '51297', name: 'Crescent MFB' },
+            { code: '090560', name: 'Crust Microfinance Bank' },
+            { code: '50216', name: 'CRUTECH MICROFINANCE BANK LTD' },
+            { code: '51334', name: 'Davenport MICROFINANCE BANK' },
+            { code: '51450', name: 'Dillon Microfinance Bank' },
+            { code: '50162', name: 'Dot Microfinance Bank' },
+            { code: '50922', name: 'EBSU Microfinance Bank' },
+            { code: '050', name: 'Ecobank Nigeria' },
+            { code: '50263', name: 'Ekimogun MFB' },
+            { code: '098', name: 'Ekondo Microfinance Bank' },
+            { code: '090678', name: 'EXCEL FINANCE BANK' },
+            { code: '50126', name: 'Eyowo' },
+            { code: '51318', name: 'Fairmoney Microfinance Bank' },
+            { code: '50298', name: 'Fedeth MFB' },
+            { code: '070', name: 'Fidelity Bank' },
+            { code: '51314', name: 'Firmus MFB' },
+            { code: '011', name: 'First Bank of Nigeria' },
+            { code: '214', name: 'First City Monument Bank' },
+            { code: '090164', name: 'FIRST ROYAL MICROFINANCE BANK' },
+            { code: '51333', name: 'FIRSTMIDAS MFB' },
+            { code: '413', name: 'FirstTrust Mortgage Bank Nigeria' },
+            { code: '501', name: 'FSDH Merchant Bank Limited' },
+            { code: '832', name: 'FUTMINNA MICROFINANCE BANK' },
+            { code: 'MFB51093', name: 'Garun Mallam MFB' },
+            { code: '812', name: 'Gateway Mortgage Bank LTD' },
+            { code: '00103', name: 'Globus Bank' },
+            { code: '090574', name: 'Goldman MFB' },
+            { code: '100022', name: 'GoMoney' },
+            { code: '090664', name: 'GOOD SHEPHERD MICROFINANCE BANK' },
+            { code: '50739', name: 'Goodnews Microfinance Bank' },
+            { code: '562', name: 'Greenwich Merchant Bank' },
+            { code: '51276', name: 'GROOMING MICROFINANCE BANK' },
+            { code: '50368', name: 'GTI MFB' },
+            { code: '058', name: 'Guaranty Trust Bank' },
+            { code: '51251', name: 'Hackman Microfinance Bank' },
+            { code: '50383', name: 'Hasal Microfinance Bank' },
+            { code: '120002', name: 'HopePSB' },
+            { code: '51211', name: 'IBANK Microfinance Bank' },
+            { code: '51279', name: 'IBBU MFB' },
+            { code: '51244', name: 'Ibile Microfinance Bank' },
+            { code: '90012', name: 'Ibom Mortgage Bank' },
+            { code: '50439', name: 'Ikoyi Osun MFB' },
+            { code: '50442', name: 'Ilaro Poly Microfinance Bank' },
+            { code: '50453', name: 'Imowo MFB' },
+            { code: '415', name: 'IMPERIAL HOMES MORTAGE BANK' },
+            { code: '51392', name: 'INDULGE MFB' },
+            { code: '50457', name: 'Infinity MFB' },
+            { code: '070016', name: 'Infinity trust Mortgage Bank' },
+            { code: '090701', name: 'ISUA MFB' },
+            { code: '301', name: 'Jaiz Bank' },
+            { code: '50502', name: 'Kadpoly MFB' },
+            { code: '51308', name: 'KANOPOLY MFB' },
+            { code: '082', name: 'Keystone Bank' },
+            { code: '899', name: 'Kolomoni MFB' },
+            { code: '100025', name: 'KONGAPAY (Kongapay Technologies Limited)' },
+            { code: '50200', name: 'Kredi Money MFB LTD' },
+            { code: '50211', name: 'Kuda Bank' },
+            { code: '90052', name: 'Lagos Building Investment Company Plc.' },
+            { code: '090420', name: 'Letshego Microfinance Bank' },
+            { code: '50549', name: 'Links MFB' },
+            { code: '031', name: 'Living Trust Mortgage Bank' },
+            { code: '50491', name: 'LOMA MFB' },
+            { code: '303', name: 'Lotus Bank' },
+            { code: '090171', name: 'MAINSTREET MICROFINANCE BANK' },
+            { code: '50563', name: 'Mayfair MFB' },
+            { code: '50304', name: 'Mint MFB' },
+            { code: '946', name: 'Money Master PSB' },
+            { code: '50515', name: 'Moniepoint MFB' },
+            { code: '120003', name: 'MTN Momo PSB' },
+            { code: '090190', name: 'MUTUAL BENEFITS MICROFINANCE BANK' },
+            { code: '090679', name: 'NDCC MICROFINANCE BANK' },
+            { code: '51361', name: 'NET MICROFINANCE BANK' },
+            { code: '51142', name: 'Nigerian Navy Microfinance Bank Limited' },
+            { code: '50072', name: 'Nombank MFB' },
+            { code: '561', name: 'NOVA BANK' },
+            { code: '51371', name: 'Novus MFB' },
+            { code: '50629', name: 'NPF MICROFINANCE BANK' },
+            { code: '51261', name: 'NSUK MICROFINANACE BANK' },
+            { code: '50697', name: 'OLUCHUKWU MICROFINANCE BANK LTD' },
+            { code: '999992', name: 'OPay Digital Services Limited (OPay)' },
+            { code: '107', name: 'Optimus Bank Limited' },
+            { code: '100002', name: 'Paga' },
+            { code: '999991', name: 'PalmPay' },
+            { code: '104', name: 'Parallex Bank' },
+            { code: '311', name: 'Parkway - ReadyCash' },
+            { code: '090680', name: 'PATHFINDER MICROFINANCE BANK LIMITED' },
+            { code: '100039', name: 'Paystack-Titan' },
+            { code: '50743', name: 'Peace Microfinance Bank' },
+            { code: '51226', name: 'PECANTRUST MICROFINANCE BANK LIMITED' },
+            { code: '51146', name: 'Personal Trust MFB' },
+            { code: '50746', name: 'Petra Mircofinance Bank Plc' },
+            { code: 'MFB51452', name: 'Pettysave MFB' },
+            { code: '050021', name: 'PFI FINANCE COMPANY LIMITED' },
+            { code: '268', name: 'Platinum Mortgage Bank' },
+            { code: '00716', name: 'Pocket App' },
+            { code: '076', name: 'Polaris Bank' },
+            { code: '50864', name: 'Polyunwana MFB' },
+            { code: '105', name: 'PremiumTrust Bank' },
+            { code: '50739', name: 'Prospa Capital Microfinance Bank' },
+            { code: '050023', name: 'PROSPERIS FINANCE LIMITED' },
+            { code: '101', name: 'Providus Bank' },
+            { code: '51293', name: 'QuickFund MFB' },
+            { code: '502', name: 'Rand Merchant Bank' },
+            { code: '090496', name: 'RANDALPHA MICROFINANCE BANK' },
+            { code: '90067', name: 'Refuge Mortgage Bank' },
+            { code: '50761', name: 'REHOBOTH MICROFINANCE BANK' },
+            { code: '50994', name: 'Rephidim Microfinance Bank' },
+            { code: '51286', name: 'Rigo Microfinance Bank Limited' },
+            { code: '50767', name: 'ROCKSHIELD MICROFINANCE BANK' },
+            { code: '125', name: 'Rubies MFB' },
+            { code: '51113', name: 'Safe Haven MFB' },
+            { code: '40165', name: 'SAGE GREY FINANCE LIMITED' },
+            { code: '50582', name: 'Shield MFB' },
+            { code: '106', name: 'Signature Bank Ltd' },
+            { code: '51062', name: 'Solid Allianze MFB' },
+            { code: '50800', name: 'Solid Rock MFB' },
+            { code: '51310', name: 'Sparkle Microfinance Bank' },
+            { code: '51429', name: 'Springfield Microfinance Bank' },
+            { code: '221', name: 'Stanbic IBTC Bank' },
+            { code: '068', name: 'Standard Chartered Bank' },
+            { code: '090162', name: 'STANFORD MICROFINANCE BANK' },
+            { code: '50809', name: 'STATESIDE MICROFINANCE BANK' },
+            { code: '070022', name: 'STB Mortgage Bank' },
+            { code: '51253', name: 'Stellas MFB' },
+            { code: '232', name: 'Sterling Bank' },
+            { code: '100', name: 'Suntrust Bank' },
+            { code: '50968', name: 'Supreme MFB' },
+            { code: '302', name: 'TAJ Bank' },
+            { code: '51269', name: 'Tangerine Money' },
+            { code: '51403', name: 'TENN' },
+            { code: '102', name: 'Titan Bank' },
+            { code: '090708', name: 'TransPay MFB' },
+            { code: '50840', name: 'U&C Microfinance Bank Ltd (U AND C MFB)' },
+            { code: '090706', name: 'UCEE MFB' },
+            { code: '51322', name: 'Uhuru MFB' },
+            { code: '51080', name: 'Ultraviolet Microfinance Bank' },
+            { code: '50870', name: 'Unaab Microfinance Bank Limited' },
+            { code: '51447', name: 'UNIABUJA MFB' },
+            { code: '50871', name: 'Unical MFB' },
+            { code: '51316', name: 'Unilag Microfinance Bank' },
+            { code: '50875', name: 'UNIMAID MICROFINANCE BANK' },
+            { code: '032', name: 'Union Bank of Nigeria' },
+            { code: '033', name: 'United Bank For Africa' },
+            { code: '215', name: 'Unity Bank' },
+            { code: '50894', name: 'Uzondu Microfinance Bank Awka Anambra State' },
+            { code: '050020', name: 'Vale Finance Limited' },
+            { code: '566', name: 'VFD Microfinance Bank Limited' },
+            { code: '51355', name: 'Waya Microfinance Bank' },
+            { code: '035', name: 'Wema Bank' },
+            { code: '51386', name: 'Weston Charis MFB' },
+            { code: '100040', name: 'Xpress Wallet' },
+            { code: '594', name: 'Yes MFB' },
+            { code: '057', name: 'Zenith Bank' }
+        ];
+
+        // Rubies Bank List
+        const RUBIES_BANKS = [
+            { code: '110005', name: '3LINE CARD MANAGEMENT' },
+            { code: '110072', name: '78 FINANCE COMPANY' },
+            { code: '120001', name: '9 PAYMENT SERVICE BANK' },
+            { code: '090629', name: '9JAPAY MFB' },
+            { code: '050005', name: 'AAA FINANCE' },
+            { code: '090270', name: 'AB MFB' },
+            { code: '070010', name: 'ABBEY MORTGAGE BANK' },
+            { code: '090260', name: 'ABOVE ONLY MFB' },
+            { code: '090640', name: 'ABSU MFB' },
+            { code: '090197', name: 'ABU MFB' },
+            { code: '090424', name: 'ABUCOOP MFB' },
+            { code: '090545', name: 'ABULESORO MFB' },
+            { code: '090202', name: 'ACCELEREX NETWORK' },
+            { code: '000014', name: 'ACCESS BANK' },
+            { code: '000005', name: 'ACCESS BANK' },
+            { code: '100013', name: 'ACCESSMONEY' },
+            { code: '090134', name: 'ACCION MFB' },
+            { code: '090483', name: 'ADA MFB' },
+            { code: '090160', name: 'ADDOSSER MFB' },
+            { code: '090268', name: 'ADEYEMI COLLEGE STAFF MFB' },
+            { code: '090759', name: 'ADVANCLY MFB' },
+            { code: '090155', name: 'ADVANS LA FAYETTE MFB' },
+            { code: '090614', name: 'AELLA MFB' },
+            { code: '090292', name: 'AFEKHAFE MFB' },
+            { code: '090518', name: 'AFEMAI MFB' },
+            { code: '100028', name: 'AG MORTGAGE BANK' },
+            { code: '090371', name: 'AGOSASA MFB' },
+            { code: '090698', name: 'AKALABO MFB' },
+            { code: '090608', name: 'AKPO MFB' },
+            { code: '090531', name: 'AKU MFB' },
+            { code: '090561', name: 'AKUCHUKWU MFB' },
+            { code: '070025', name: 'AKWA SAVINGS & LOANS' },
+            { code: '090133', name: 'AL-BARAKAH MFB' },
+            { code: '090259', name: 'ALEKUN MFB' },
+            { code: '090297', name: 'ALERT MFB' },
+            { code: '090277', name: 'ALHAYAT MFB' },
+            { code: '090131', name: 'ALLWORKERS MFB' },
+            { code: '090548', name: 'ALLY MFB' },
+            { code: '090169', name: 'ALPHA KAPITAL MFB' },
+            { code: '000037', name: 'ALTERNATIVE BANK' },
+            { code: '090489', name: 'ALVANA MFB' },
+            { code: '090394', name: 'AMAC MFB' },
+            { code: '090180', name: 'AMJU MFB' },
+            { code: '090116', name: 'AMML MFB' },
+            { code: '090610', name: 'AMOYE MFB' },
+            { code: '090476', name: 'ANCHORAGE MFB' },
+            { code: '090469', name: 'ANIOCHA MFB' },
+            { code: '090143', name: 'APEKS MFB' },
+            { code: '090376', name: 'APPLE MFB' },
+            { code: '090307', name: 'ARAMOKO MFB' },
+            { code: '110011', name: 'ARCA PAYMENTS' },
+            { code: '090282', name: 'ARISE MFB' },
+            { code: '090816', name: 'ARM MFB' },
+            { code: '090001', name: 'ASO SAVINGS & LOANS' },
+            { code: '090544', name: 'ASPIRE MFB' },
+            { code: '070033', name: 'ASPIRE MORTGAGE BANK' },
+            { code: '090287', name: 'ASSETS MATRIX MFB' },
+            { code: '090473', name: 'ASSETS MFB' },
+            { code: '090172', name: 'ASTRA POLARIS MFB' },
+            { code: '090451', name: 'ATBU MFB' },
+            { code: '090264', name: 'AUCHI MFB' },
+            { code: '090600', name: 'AVE MARIA MFB' },
+            { code: '090478', name: 'AVUENEGBE MFB' },
+            { code: '090633', name: 'AWACASH MFB' },
+            { code: '090693', name: 'AWE MFB' },
+            { code: '090662', name: 'AWESOME MFB' },
+            { code: '090540', name: 'AZTEC MFB' }
+        ];
 
         // ==================== GLOBAL CONFIG ====================
         const CONFIG = {
@@ -663,10 +939,36 @@
             EDGE_URL: 'https://qujlyrmatuvlpoeheqgf.supabase.co/functions/v1/empire-wallet-transfer',
             SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1amx5cm1hdHV2bHBvZWhlcWdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwOTE5NDUsImV4cCI6MjA2NzY2Nzk0NX0.PgIRCU_-r6o-u6AIhj52FE1iezdwt3wpi-a9zQvAdsc',
             
-            CRYPTO_RATES: { BTC: 43521.50, ETH: 2280.15, USDT: 1.00, BNB: 315.75 },
-            CRYPTO_FEES: { BTC: 0.0005, ETH: 0.005, USDT: 2.50, BNB: 0.001 },
-            FOREX_RATES: { EUR: 0.92, GBP: 0.79, CAD: 1.35, AUD: 1.52, JPY: 150.25, CHF: 0.88 },
-            PLATFORM_FEES: { crypto: 0.001, international: 15, internal: 0, minFee: 1, maxFee: 50 }
+            CRYPTO_RATES: {
+                BTC: 43521.50,
+                ETH: 2280.15,
+                USDT: 1.00,
+                BNB: 315.75
+            },
+            
+            CRYPTO_FEES: {
+                BTC: 0.0005,
+                ETH: 0.005,
+                USDT: 2.50,
+                BNB: 0.001
+            },
+            
+            FOREX_RATES: {
+                EUR: 0.92,
+                GBP: 0.79,
+                CAD: 1.35,
+                AUD: 1.52,
+                JPY: 150.25,
+                CHF: 0.88
+            },
+            
+            PLATFORM_FEES: {
+                crypto: 0.001,
+                international: 15,
+                internal: 0,
+                minFee: 1,
+                maxFee: 50
+            }
         };
 
         // ==================== GLOBAL STATE ====================
@@ -676,10 +978,17 @@
             selectedMatch: null,
             approvalCode: null,
             currentTransaction: null,
-            cryptoBalances: { BTC: 2.5432, ETH: 15.789, USDT: 50000, BNB: 125.5 },
+            
+            cryptoBalances: {
+                BTC: 2.5432,
+                ETH: 15.789,
+                USDT: 50000,
+                BNB: 125.5
+            },
             selectedCrypto: 'BTC',
             selectedNetwork: 'Bitcoin',
             validatedCryptoAddress: null,
+            
             selectedCurrency: 'EUR',
             internalUser: null
         };
@@ -714,23 +1023,60 @@
         }
 
         function updateCryptoDisplay() {
-            // ... crypto display code ...
+            const btcEl = document.getElementById('btcBalance');
+            if (btcEl) btcEl.innerText = state.cryptoBalances.BTC.toFixed(4);
+            const ethEl = document.getElementById('ethBalance');
+            if (ethEl) ethEl.innerText = state.cryptoBalances.ETH.toFixed(3);
+            const usdtEl = document.getElementById('usdtBalance');
+            if (usdtEl) usdtEl.innerText = state.cryptoBalances.USDT.toLocaleString();
+            const bnbEl = document.getElementById('bnbBalance');
+            if (bnbEl) bnbEl.innerText = state.cryptoBalances.BNB.toFixed(1);
+            
+            const btcOpt = document.getElementById('btcOptionBalance');
+            if (btcOpt) btcOpt.innerText = state.cryptoBalances.BTC.toFixed(4) + ' BTC';
+            const ethOpt = document.getElementById('ethOptionBalance');
+            if (ethOpt) ethOpt.innerText = state.cryptoBalances.ETH.toFixed(3) + ' ETH';
+            const usdtOpt = document.getElementById('usdtOptionBalance');
+            if (usdtOpt) usdtOpt.innerText = state.cryptoBalances.USDT.toLocaleString() + ' USDT';
+            const bnbOpt = document.getElementById('bnbOptionBalance');
+            if (bnbOpt) bnbOpt.innerText = state.cryptoBalances.BNB.toFixed(1) + ' BNB';
+            
+            const totalUSD = 
+                (state.cryptoBalances.BTC * CONFIG.CRYPTO_RATES.BTC) +
+                (state.cryptoBalances.ETH * CONFIG.CRYPTO_RATES.ETH) +
+                (state.cryptoBalances.USDT * CONFIG.CRYPTO_RATES.USDT) +
+                (state.cryptoBalances.BNB * CONFIG.CRYPTO_RATES.BNB);
+            
+            const totalEl = document.getElementById('cryptoTotalDisplay');
+            if (totalEl) totalEl.innerText = '$' + totalUSD.toLocaleString(undefined, {maximumFractionDigits: 2});
         }
 
         // ==================== PLATFORM SWITCHING ====================
         window.switchPlatform = function(platform) {
             document.querySelectorAll('.platform-tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.platform-content').forEach(content => content.classList.remove('active'));
+            
             const tab = document.querySelector(`[onclick="switchPlatform('${platform}')"]`);
             if (tab) tab.classList.add('active');
+            
             const content = document.getElementById(`platform-${platform}`);
             if (content) content.classList.add('active');
+            
             showStatus(`Switched to ${platform} platform`, 'info');
         };
 
         // ==================== RUBIES CODE MAPPING ====================
         function getRubiesCode(paystackCode, bankName) {
-            const manualMap = { /* ... your mapping ... */ };
+            const manualMap = {
+                '044': '000005', '058': '000013', '057': '000015', '033': '000004',
+                '011': '000016', '070': '000007', '214': '000003', '035': '000017',
+                '032': '000018', '076': '000008', '050': '000010', '221': '000012',
+                '068': '000021', '082': '000002', '301': '000006', '023': '000009',
+                '999992': '100004', '50211': '090267', '999991': '100033',
+                '50515': '090405', '125': '090175', '035A': '000017', '00103': '000027',
+                '105': '000031', '106': '000034', '101': '000023', '100': '000022',
+                '302': '000026', '303': '000029', '566': '090110', '565': '100026'
+            };
             return manualMap[paystackCode] || '000001';
         }
 
@@ -895,7 +1241,6 @@
             document.getElementById('withdrawBtn').disabled = false;
         };
 
-        // ==================== EXECUTE WITHDRAWAL WITH PROVIDER HEADER ====================
         window.executeWithdrawal = async function() {
             const userCode = document.getElementById('approvalCode').value.trim();
             
@@ -936,7 +1281,6 @@
             };
 
             try {
-                // Provider selection
                 const provider = 'rubies';
                 
                 const res = await fetch(CONFIG.EDGE_URL, {
@@ -1341,7 +1685,6 @@
             document.getElementById('monitorType').innerText = transaction?.type || '-';
             document.getElementById('monitorAmount').innerText = transaction?.amount || '$0';
             
-            // FIXED: Ensure status is a string before calling toUpperCase()
             const statusText = (transaction?.status || 'pending').toString();
             document.getElementById('monitorStatus').innerText = statusText.toUpperCase();
             
